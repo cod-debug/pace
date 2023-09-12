@@ -16,4 +16,9 @@ class OfficeModel extends Model
         'description',
         'status'
     ];
+
+    public function employees()
+    {
+        return $this->hasMany(EmployeeModel::class, 'office_id');
+    }
 }
