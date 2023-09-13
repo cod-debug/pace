@@ -24,7 +24,7 @@
                                 <div class="col-md-6 p-2">
                                     <div class="form-group">
                                         <label><b class="text-danger">*</b> DEPARTMENT: </label>
-                                        <select name="department" required id="department" v-model="office_id" class="form-control">
+                                        <select name="department" required id="department" v-model="office_id" class="form-select">
                                             <option v-for="(item, key) in office_list" :key="key" :value="item.id">
                                                 {{ item.name }}
                                             </option>
@@ -34,7 +34,7 @@
                                 <div class="col-md-6 p-2">
                                     <div class="form-group">
                                         <label><b class="text-danger">*</b> EMPLOYMENT STATUS: </label>
-                                        <select name="employment_status" required id="employment_status" v-model="employment_status" class="form-control">
+                                        <select name="employment_status" required id="employment_status" v-model="employment_status" class="form-select">
                                             <option v-for="(item, key) in employment_status_list" :key="key" :value="item">
                                                 {{ item }}
                                             </option>
@@ -50,7 +50,7 @@
                                 <div class="col-md-6 p-2">
                                     <div class="form-group">
                                         <label><b class="text-danger">*</b> CIVIL STATUS: </label>
-                                        <select name="civil_status" required id="civil_status" v-model="civil_status" class="form-control">
+                                        <select name="civil_status" required id="civil_status" v-model="civil_status" class="form-select">
                                             <option v-for="(item, key) in civil_status_list" :key="key" :value="item">
                                                 {{ item }}
                                             </option>

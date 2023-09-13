@@ -47,4 +47,10 @@ class EmployeeController extends Controller
 
         return view('employees.list');
     }
+
+    public function listPaginated(){
+        $list = EmployeeModel::where('status', 'active')->paginate(10);
+
+        return json_encode($list);
+    }
 }

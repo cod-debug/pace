@@ -31,8 +31,13 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td colspan="3" class="text-muted">No data found.</td>
+                        <tr v-for="(item, key) in list_data.data" :key="key">
+                            <td>
+                                {{ item.full_name }}
+                            </td>
+                            <td>
+                                {{ item.position }}
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -46,10 +51,38 @@
     export default {
         data: () => ({
             search: '',
+            list_data: [],
         }),
+        mounted(){
+            this.getList();
+        },
         methods: {
             async submitSearch() {
 
+            },
+
+            async getList(){
+                try {
+                    this.is_loading_list = true;
+                    let {data, status} = await this.$axios('get','/employee/list-paginated');
+                    
+                    if([200, 201].includes(status)){
+                        this.list_data = data;
+                    } else {
+                        this.$swal({
+                            title: 'Success',
+                            text: data.message,
+                            icon: 'error'
+                        });
+                    }
+                } catch (e) {
+                    this.$swal({
+                        title: 'Success',
+                        text: 'Something went wrong during data fetching.',
+                        icon: 'error'
+                    });
+                }
+                this.is_loading_list = false;
             },
         },
     }

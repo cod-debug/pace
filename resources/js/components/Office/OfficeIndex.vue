@@ -7,16 +7,20 @@
                 </div>
                 <div class="border border-muted my-2"></div>
 
-                <table class="table">
+                <table class="table table-striped table-hovered">
                     <thead>
-                        <tr>
-                            <th width="45%">Office Name</th>
+                        <tr class="bg-primary text-white">
+                            <th width="45%">
+                                Office Name 
+                                <button type="button" v-if="!show_form" class="btn btn-sm btn-success" @click="toggleShowForm"><i class="fa fa-plus-circle"></i></button>
+                                <button type="button" v-if="show_form" class="btn btn-sm btn-danger" @click="toggleShowForm"><i class="fa fa-times-circle"></i></button>
+                            </th>
                             <th width="45%">Desciption</th>
                             <th class="text-right">Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
+                        <tr v-if="show_form">
                             <td><input type="text" class="form-control" v-model="name" placeholder="Enter office name" /></td>
                             <td><input type="text" class="form-control" v-model="description" placeholder="Description" /></td>
                             <td class="text-right">
@@ -32,11 +36,11 @@
                                 {{ item.description }}
                             </td>
                             <td class="text-right">
-                                <button class="btn btn-success btn-sm mx-1" @click="update(item)" v-if="!show_confirm_delete"><i class="fa fa-edit"></i></button>
-                                <button class="btn btn-danger btn-sm" @click="show_confirm_delete = true" v-if="!show_confirm_delete"><i class="fa fa-trash"></i></button>
-                                <div class="" v-if="show_confirm_delete">
+                                <button class="btn btn-success btn-sm mx-1" @click="update(item)" v-if="selected_id != item.id || is_update"><i class="fa fa-edit"></i></button>
+                                <button class="btn btn-danger btn-sm" @click="confirmDelete(item)" v-if="selected_id != item.id || is_update"><i class="fa fa-trash"></i></button>
+                                <div class="" v-if="show_confirm_delete && selected_id == item.id">
                                     <button class="btn btn-danger btn-sm" @click="removeOffice(item.id)" title="Confirm delete?"><i class="fa fa-check-circle"></i></button>
-                                    <button class="btn btn-success btn-sm mx-1" @click="show_confirm_delete = false" title="Cancel delete?"><i class="fa fa-times-circle"></i></button>
+                                    <button class="btn btn-success btn-sm mx-1" @click="cancelDelete" title="Cancel delete?"><i class="fa fa-times-circle"></i></button>
                                 </div>
                             </td>
                         </tr>
@@ -58,6 +62,7 @@
             selected_id: null,
             is_update: false,
             show_confirm_delete: false,
+            show_form: false,
         }),
         methods:{
             async saveOffice(){
@@ -81,9 +86,7 @@
                             text: data.message,
                             icon: 'success'
                         });
-                        this.name = "";
-                        this.description = "";
-                        this.is_update = false;
+                        this.clearForm();
                         this.getList();
                     } else {
                         this.$swal({
@@ -114,10 +117,7 @@
                             text: data.message,
                             icon: 'success'
                         });
-                        this.name = "";
-                        this.description = "";
-                        this.show_confirm_delete = false;
-                        this.getList();
+                        this.clearForm();
                     } else {
                         this.$swal({
                             title: 'Success',
@@ -182,11 +182,14 @@
                 this.is_loading_list = false;
             },
 
-
+            toggleShowForm(){
+                this.show_form = !this.show_form;
+            },
             update(item){
                 this.name = item.name;
                 this.description = item.description;
                 this.selected_id = item.id;
+                this.show_form = true;
                 this.is_update = true;
             },
             cancelSave(){
@@ -194,6 +197,21 @@
                 this.description = "";
                 this.selected_id = null;
                 this.is_update = false;
+            },
+            confirmDelete(item){
+                this.selected_id = item.id;
+                this.show_confirm_delete = true;
+            },
+            cancelDelete(){
+                this.selected_id = null;
+                this.show_confirm_delete = false;
+            },
+            clearForm(){
+                this.name = "";
+                this.description = "";
+                this.selected_id = null;
+                this.show_confirm_delete = false;
+                this.getList();
             },
         },
         mounted(){

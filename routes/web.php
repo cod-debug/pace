@@ -30,4 +30,5 @@ Route::group(['prefix' => 'office', 'as' => 'office.'], function () {
 Route::group(['prefix' => 'employee', 'as' => 'employee.'], function () {
     Route::get('/', 'EmployeeController@index')->name('list');
     Route::get('/add', 'EmployeeController@add')->name('add');
+    Route::get('/list-paginated', 'EmployeeController@listPaginated')->name('list-paginated');
 });

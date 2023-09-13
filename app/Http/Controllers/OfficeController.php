@@ -17,7 +17,7 @@ class OfficeController extends Controller
     }
 
     public function list(){
-        $list = OfficeModel::where('status', 'active')->paginate(10);
+        $list = OfficeModel::where('status', 'active')->orderBy('created_at', 'DESC')->paginate(10);
 
         return json_encode($list);
     }
