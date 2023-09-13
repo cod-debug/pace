@@ -4,9 +4,44 @@
             <div class="bg-white shadow-lg p-3">
                 <div class="d-flex justify-content-between align-items-center">
                     <h4><i class="fa fa-building"></i> List of Offices</h4>
-                    <a href="#" class="btn btn-outline-primary"><i class="fa fa-plus-circle"></i> Add Office</a>
                 </div>
                 <div class="border border-muted my-2"></div>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th width="45%">Office Name</th>
+                            <th width="45%">Desciption</th>
+                            <th class="text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="text" class="form-control" v-model="name" placeholder="Enter office name" /></td>
+                            <td><input type="text" class="form-control" v-model="description" placeholder="Description" /></td>
+                            <td class="text-right">
+                                <button @click="saveOffice" :disabled="disabledSave" class="btn btn-primary" title="Save"><i class="fa fa-save"></i></button>
+                                <button @click="cancelSave" v-if="is_update"  class="btn btn-secondary mx-1" title="Cancel"><i class="fa fa-cancel"></i></button>
+                            </td>
+                        </tr>
+                        <tr v-for="(item, key) in list_data.data" :key="key">
+                            <td>
+                                {{ item.name }}
+                            </td>
+                            <td>
+                                {{ item.description }}
+                            </td>
+                            <td class="text-right">
+                                <button class="btn btn-success btn-sm mx-1" @click="update(item)" v-if="!show_confirm_delete"><i class="fa fa-edit"></i></button>
+                                <button class="btn btn-danger btn-sm" @click="show_confirm_delete = true" v-if="!show_confirm_delete"><i class="fa fa-trash"></i></button>
+                                <div class="" v-if="show_confirm_delete">
+                                    <button class="btn btn-danger btn-sm" @click="removeOffice(item.id)" title="Confirm delete?"><i class="fa fa-check-circle"></i></button>
+                                    <button class="btn btn-success btn-sm mx-1" @click="show_confirm_delete = false" title="Cancel delete?"><i class="fa fa-times-circle"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -16,8 +51,158 @@
 <script>
     export default {
         data: () => ({
-
+            name: '',
+            description: '',
+            list_data: {},
+            is_loading_list: false,
+            selected_id: null,
+            is_update: false,
+            show_confirm_delete: false,
         }),
+        methods:{
+            async saveOffice(){
+                let payload = {
+                    name: this.name,
+                    description: this.description,
+                } 
 
+                let endpoint = '/office/store';
+
+                if(this.is_update){
+                    endpoint = '/office/update';
+                    payload.id = this.selected_id;
+                }
+                try {
+                    let {data,status} = await this.$axios('post', endpoint, this.payloadToFormdata(payload));
+                    
+                    if([200, 201].includes(status)){
+                        this.$swal({
+                            title: 'Success',
+                            text: data.message,
+                            icon: 'success'
+                        });
+                        this.name = "";
+                        this.description = "";
+                        this.is_update = false;
+                        this.getList();
+                    } else {
+                        this.$swal({
+                            title: 'Success',
+                            text: data.message,
+                            icon: 'error'
+                        });
+                    }
+                } catch (e) {
+                    this.$swal({
+                        title: 'Success',
+                        text: 'Something went wrong during submission. Kindly contact the developer.',
+                        icon: 'error'
+                    });
+                }
+            },
+            async removeOffice(id){
+                let payload = {
+                    status: 'deactivated',
+                    id: id,
+                } 
+                try {
+                    let {data,status} = await this.$axios('post', '/office/delete', this.payloadToFormdata(payload));
+                    
+                    if([200, 201].includes(status)){
+                        this.$swal({
+                            title: 'Success',
+                            text: data.message,
+                            icon: 'success'
+                        });
+                        this.name = "";
+                        this.description = "";
+                        this.show_confirm_delete = false;
+                        this.getList();
+                    } else {
+                        this.$swal({
+                            title: 'Success',
+                            text: data.message,
+                            icon: 'error'
+                        });
+                    }
+                } catch (e) {
+                    this.$swal({
+                        title: 'Success',
+                        text: 'Something went wrong during submission. Kindly contact the developer.',
+                        icon: 'error'
+                    });
+                }
+            },
+
+            async getList(){
+                try {
+                    this.is_loading_list = true;
+                    let {data, status} = await this.$axios('get','/office/list-api');
+                    
+                    if([200, 201].includes(status)){
+                        this.list_data = data;
+                    } else {
+                        this.$swal({
+                            title: 'Success',
+                            text: data.message,
+                            icon: 'error'
+                        });
+                    }
+                } catch (e) {
+                    this.$swal({
+                        title: 'Success',
+                        text: 'Something went wrong during data fetching.',
+                        icon: 'error'
+                    });
+                }
+                this.is_loading_list = false;
+            },
+
+            async getList(){
+                try {
+                    this.is_loading_list = true;
+                    let {data, status} = await this.$axios('get','/office/list-api');
+                    
+                    if([200, 201].includes(status)){
+                        this.list_data = data;
+                    } else {
+                        this.$swal({
+                            title: 'Success',
+                            text: data.message,
+                            icon: 'error'
+                        });
+                    }
+                } catch (e) {
+                    this.$swal({
+                        title: 'Success',
+                        text: 'Something went wrong during data fetching.',
+                        icon: 'error'
+                    });
+                }
+                this.is_loading_list = false;
+            },
+
+
+            update(item){
+                this.name = item.name;
+                this.description = item.description;
+                this.selected_id = item.id;
+                this.is_update = true;
+            },
+            cancelSave(){
+                this.name = "";
+                this.description = "";
+                this.selected_id = null;
+                this.is_update = false;
+            },
+        },
+        mounted(){
+            this.getList();
+        },
+        computed: {
+            disabledSave(){
+                return this.name == '' ? true : false;
+            }
+        },
     }
 </script>

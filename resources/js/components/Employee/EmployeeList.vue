@@ -4,7 +4,7 @@
             <div class="bg-white shadow-lg p-3">
                 <div class="d-flex justify-content-between align-items-center">
                     <h4><i class="fa fa-users"></i> List of Employees</h4>
-                    <a href="/employee/add" class="btn btn-outline-primary"><i class="fa fa-plus-circle"></i> Add Employee</a>
+                    <a href="/employee/add" class="btn btn-info"><i class="fa fa-plus-circle"></i> Add Employee</a>
                 </div>
                 <div class="border border-muted my-2"></div>
                 <form @submit.prevent="submitSearch" class="mt-4 mb-2">

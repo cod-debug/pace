@@ -2,14 +2,20 @@ import './bootstrap';
 
 import { createApp } from 'vue';
 import Example from './components/Example.vue';
+
 import OfficeIndex from './components/Office/OfficeIndex.vue';
+import OfficeAdd from './components/Office/OfficeAdd.vue';
+
 import EmployeeList from './components/Employee/EmployeeList.vue';
 import EmployeeAdd from './components/Employee/EmployeeAdd.vue';
+
+import Swal from 'sweetalert2';
 
 const app = createApp({
     components: {
         Example,
         AppOffice: OfficeIndex,
+        AppOfficeAdd: OfficeAdd,
         AppEmployeeList: EmployeeList,
         AppEmployeeAdd: EmployeeAdd,
     }
@@ -25,7 +31,9 @@ app.mixin({
                 return e
             }
         },
-        
+        $swal(options){
+            Swal.fire(options);
+        },
         truncateText(text, limit) {
             if (text.length <= limit) {
                 return text;

@@ -25,6 +25,9 @@
                                     <div class="form-group">
                                         <label><b class="text-danger">*</b> DEPARTMENT: </label>
                                         <select name="department" required id="department" v-model="office_id" class="form-control">
+                                            <option v-for="(item, key) in office_list" :key="key" :value="item.id">
+                                                {{ item.name }}
+                                            </option>
                                         </select>
                                     </div>
                                 </div>
@@ -32,6 +35,9 @@
                                     <div class="form-group">
                                         <label><b class="text-danger">*</b> EMPLOYMENT STATUS: </label>
                                         <select name="employment_status" required id="employment_status" v-model="employment_status" class="form-control">
+                                            <option v-for="(item, key) in employment_status_list" :key="key" :value="item">
+                                                {{ item }}
+                                            </option>
                                         </select>
                                     </div>
                                 </div>
@@ -44,7 +50,11 @@
                                 <div class="col-md-6 p-2">
                                     <div class="form-group">
                                         <label><b class="text-danger">*</b> CIVIL STATUS: </label>
-                                        <input type="text" class="form-control" v-model="civil_status">
+                                        <select name="civil_status" required id="civil_status" v-model="civil_status" class="form-control">
+                                            <option v-for="(item, key) in civil_status_list" :key="key" :value="item">
+                                                {{ item }}
+                                            </option>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="col-md-12 p-2">
@@ -202,7 +212,7 @@ const MARRIED_DEPENDENT_TYPE_OPTION = ['MOTHER', 'FATHER','SPOUSE', 'CHILD'];
     export default {
         data: () => ({
             full_name: '',
-            office_id: 1,
+            office_id: null,
             employment_status: 'employed',
             civil_status: '',
             home_address: '',
@@ -226,6 +236,10 @@ const MARRIED_DEPENDENT_TYPE_OPTION = ['MOTHER', 'FATHER','SPOUSE', 'CHILD'];
                     name: '',
                 }
             ],
+
+            office_list: [],
+            employment_status_list: ['Employed', 'Retired'],
+            civil_status_list: ['Single', 'Married', 'Widowed'],
         }),
         watch: {
 
@@ -272,6 +286,10 @@ const MARRIED_DEPENDENT_TYPE_OPTION = ['MOTHER', 'FATHER','SPOUSE', 'CHILD'];
             }
         },
 
+        mounted(){
+            this.getOffices();
+        },
+
         methods: {
             addDependent(){
                 this.dependents.push({
@@ -296,6 +314,7 @@ const MARRIED_DEPENDENT_TYPE_OPTION = ['MOTHER', 'FATHER','SPOUSE', 'CHILD'];
                     contact_number: this.contact_number,
                     email_address:  this.email,
                     facebook_account:  this.facebook_account,
+                    dependents: JSON.stringify(this.dependents)
                 }
 
                 let formdata = this.payloadToFormdata(payload);
@@ -304,6 +323,30 @@ const MARRIED_DEPENDENT_TYPE_OPTION = ['MOTHER', 'FATHER','SPOUSE', 'CHILD'];
                 if([200, 201].includes(status)){
                     console.log(data);
                 }
+            },
+
+            async getOffices(){
+                try {
+                    this.is_loading_list = true;
+                    let {data, status} = await this.$axios('get','/office/list-all-api');
+                    
+                    if([200, 201].includes(status)){
+                        this.office_list = data;
+                    } else {
+                        this.$swal({
+                            title: 'Success',
+                            text: data.message,
+                            icon: 'error'
+                        });
+                    }
+                } catch (e) {
+                    this.$swal({
+                        title: 'Success',
+                        text: 'Something went wrong during data fetching.',
+                        icon: 'error'
+                    });
+                }
+                this.is_loading_list = false;
             },
         }
     }

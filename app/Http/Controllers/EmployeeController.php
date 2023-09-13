@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\EmployeeModel;
+use App\Models\DependentModel;
 
 class EmployeeController extends Controller
 {
@@ -30,7 +31,20 @@ class EmployeeController extends Controller
             'facebook_account' => 'max:255',
         ]);
 
-        EmployeeModel::firstOrcreate($validated);
+        $created = EmployeeModel::firstOrcreate($validated);
+        
+        $dependents = json_decode($request->dependents);
+
+        foreach($dependents as $dependent){
+            DependentModel::firstOrcreate([
+                'employee_id' => $created->id,
+                'name' => $dependent->name,
+                'birth_date' => $dependent->birth_date,
+                'relationship' => $dependent->relationship,
+                'status' => 'active',
+            ]);
+        }
+
         return view('employees.list');
     }
 }

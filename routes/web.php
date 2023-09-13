@@ -19,6 +19,12 @@ Route::get('/', function () {
 
 Route::group(['prefix' => 'office', 'as' => 'office.'], function () {
     Route::get('/', 'OfficeController@index')->name('list');
+    Route::get('/add', 'OfficeController@add')->name('add');
+    Route::post('/store', 'OfficeController@store')->name('store');
+    Route::post('/update', 'OfficeController@update')->name('update');
+    Route::post('/delete', 'OfficeController@delete')->name('delete');
+    Route::get('/list-api', 'OfficeController@list')->name('list-api');
+    Route::get('/list-all-api', 'OfficeController@listAll')->name('list-all-api'); 
 });
 
 Route::group(['prefix' => 'employee', 'as' => 'employee.'], function () {

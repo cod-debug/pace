@@ -17,7 +17,7 @@ return new class extends Migration
             $table->date('birth_date');
             $table->string('name');
             $table->string('relationship');
-            $table->string('status');
+            $table->string('status')->default('active');
             $table->timestamps();
         });
     }
