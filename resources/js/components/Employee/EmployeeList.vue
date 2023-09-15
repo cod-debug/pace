@@ -26,7 +26,6 @@
                     <thead>
                         <tr>
                             <th>Name</th>
-                            <th>Position</th>
                             <th>Office</th>
                         </tr>
                     </thead>

@@ -28,4 +28,9 @@ class EmployeeModel extends Model
     {
         return $this->belongsTo(OfficeModel::class, 'office_id');
     }
+    
+    public function dependents()
+    {
+        return $this->hasMany(DependentModel::class, 'employee_id');
+    }
 }
