@@ -22,11 +22,12 @@
                         </div>
                     </div>
                 </form>
-                <table class="table table-striped">
+                <table class="table table-striped" v-if="!is_loading_list">
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Office</th>
+                            <th width="50%">Name</th>
+                            <th width="40%">Office</th>
+                            <th class="text-right"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -35,11 +36,18 @@
                                 {{ item.full_name }}
                             </td>
                             <td>
-                                {{ item.position }}
+                                {{ item.office.name }}
+                            </td>
+                            <td class="text-right">
+                                <button class="btn btn-sm btn-success"><i class="fa fa-edit"></i></button>
+                                <button class="btn btn-sm btn-danger mx-1"><i class="fa fa-trash"></i></button>
                             </td>
                         </tr>
                     </tbody>
                 </table>
+                <div class="text-center" v-else>
+                    <app-loader />
+                </div>
             </div>
         </div>
     </div>
@@ -47,11 +55,16 @@
 
 
 <script>
+    import Loader from '../Reusables/Loader.vue';
     export default {
         data: () => ({
             search: '',
             list_data: [],
+            is_loading_list: false,
         }),
+        components: {
+            AppLoader: Loader,
+        },
         mounted(){
             this.getList();
         },
@@ -69,7 +82,7 @@
                         this.list_data = data;
                     } else {
                         this.$swal({
-                            title: 'Success',
+                            title: 'Error',
                             text: data.message,
                             icon: 'error'
                         });

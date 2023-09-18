@@ -7,7 +7,7 @@
                 </div>
                 <div class="border border-muted my-2"></div>
 
-                <table class="table table-striped table-hovered">
+                <table class="table table-striped table-hovered" v-if="!is_loading_list">
                     <thead>
                         <tr class="bg-primary text-white">
                             <th width="45%">
@@ -46,6 +46,9 @@
                         </tr>
                     </tbody>
                 </table>
+                <div class="text-center" v-else>
+                    <app-loader />
+                </div>
             </div>
         </div>
     </div>
@@ -53,6 +56,7 @@
 
 
 <script>
+    import Loader from '../Reusables/Loader.vue';
     export default {
         data: () => ({
             name: '',
@@ -64,6 +68,9 @@
             show_confirm_delete: false,
             show_form: false,
         }),
+        components: {
+            AppLoader: Loader,
+        },
         methods:{
             async saveOffice(){
                 let payload = {

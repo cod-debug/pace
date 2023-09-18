@@ -20,7 +20,7 @@ class EmployeeController extends Controller
     public function store(Request $request){
         
         $validated = $request->validate([
-            'full_name' => 'required|max:150',
+            'full_name' => 'required|max:150|unique:employees',
             'office_id' => '',#'required|numeric',
             'employment_status' => '',
             'birth_date' => 'required',
@@ -45,11 +45,15 @@ class EmployeeController extends Controller
             ]);
         }
 
-        return view('employees.list');
+        $res = [
+            'message' => 'Successfully saved employee record.'
+        ];
+
+        return json_encode($res);
     }
 
     public function listPaginated(){
-        $list = EmployeeModel::where('status', 'active')->paginate(10);
+        $list = EmployeeModel::where('status', 'active')->with('office')->paginate(10);
 
         return json_encode($list);
     }

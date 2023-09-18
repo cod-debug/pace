@@ -139,6 +139,133 @@
                             </div>
                         </div>
                     </div>
+                    <div class="form-group p-3 bg-white" v-if="step == 3">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    Personal Information
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="px-4">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group my-2">
+                                                <small class="text-muted w-100 d-block">
+                                                    Full Name
+                                                </small>
+                                                <strong class="d-block mx-2">{{ full_name }}</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group my-2">
+                                                <small class="text-muted w-100 d-block">
+                                                    Department
+                                                </small>
+                                                <strong class="d-block mx-2">{{ office_list.filter(i => i.id == office_id)[0].name }}</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group my-2">
+                                                <small class="text-muted w-100 d-block">
+                                                    Employment Status
+                                                </small>
+                                                <strong class="d-block mx-2">{{ employment_status }}</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group my-2">
+                                                <small class="text-muted w-100 d-block">
+                                                    Birth Date
+                                                </small>
+                                                <strong class="d-block mx-2">{{ birth_date }}</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group my-2">
+                                                <small class="text-muted w-100 d-block">
+                                                    Civil Status
+                                                </small>
+                                                <strong class="d-block mx-2">{{ civil_status }}</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    Address &amp; Contact
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="px-4">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group my-2">
+                                                <small class="text-muted w-100 d-block">
+                                                    Home Address
+                                                </small>
+                                                <strong class="d-block mx-2">{{ home_address }}</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group my-2">
+                                                <small class="text-muted w-100 d-block">
+                                                    Contact / Cell Number
+                                                </small>
+                                                <strong class="d-block mx-2">{{ contact_number }}</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group my-2">
+                                                <small class="text-muted w-100 d-block">
+                                                    Email Address
+                                                </small>
+                                                <strong class="d-block mx-2">{{ email }}</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group my-2">
+                                                <small class="text-muted w-100 d-block">
+                                                    Facebook Account
+                                                </small>
+                                                <strong class="d-block mx-2">{{ facebook_account }}</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <div class="card-title">
+                                   Dependents
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="px-4">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Dependent</th>
+                                                <th>Name</th>
+                                                <th>Birth Date</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="(dependent, index) in dependents" :key="index">
+                                                <td>{{ dependent.relationship }}</td>
+                                                <td>{{ dependent.name }}</td>
+                                                <td>{{ dependent.birth_date }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="d-flex" :class="step == 1 ? 'justify-content-end' : 'justify-content-between'">
                         <button class="btn btn-outline-secondary" type="button" v-if="step > 1" @click="step--"><i class="fa fa-caret-left"></i> Back</button>
                         <button class="btn btn-outline-primary" type="button" v-if="step < last_step" @click="step++">{{next_btn_text}} <i class="fa fa-caret-right"></i></button>
@@ -228,14 +355,8 @@ const MARRIED_DEPENDENT_TYPE_OPTION = ['MOTHER', 'FATHER','SPOUSE', 'CHILD'];
             dependent_type_option: MARRIED_DEPENDENT_TYPE_OPTION,
             dependents: MARRIED_DEPENDENTS_DEFAULT,
 
-            has_children: false,
             step: 1,
             last_step: 3,
-            children: [
-                {
-                    name: '',
-                }
-            ],
 
             office_list: [],
             employment_status_list: ['Employed', 'Retired'],
@@ -318,10 +439,21 @@ const MARRIED_DEPENDENT_TYPE_OPTION = ['MOTHER', 'FATHER','SPOUSE', 'CHILD'];
                 }
 
                 let formdata = this.payloadToFormdata(payload);
-                let {data, status} = await this.$axios('post', '/api/employee/store', formdata);
+                let res = await this.$axios('post', '/api/employee/store', formdata);
                  
-                if([200, 201].includes(status)){
-                    console.log(data);
+                if([200, 201].includes(res.status)){
+                    this.$swal({
+                        title: 'Success',
+                        text: res.data.message,
+                        icon: 'success'
+                    });
+                } else {
+                    this.$swal({
+                        title: 'Error',
+                        text: res.response.data.message,
+                        icon: 'error'
+                    });
+                    this.step = 1;
                 }
             },
 
