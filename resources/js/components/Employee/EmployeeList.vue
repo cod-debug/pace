@@ -25,7 +25,7 @@
                 <table class="table table-striped" v-if="!is_loading_list">
                     <thead>
                         <tr>
-                            <th width="50%">Name</th>
+                            <th width="40%">Name</th>
                             <th width="40%">Office</th>
                             <th class="text-right"></th>
                         </tr>
@@ -39,6 +39,7 @@
                                 {{ item.office.name }}
                             </td>
                             <td class="text-right">
+                                <button class="btn btn-sm btn-primary mx-4"><i class="fas fa-file-invoice"></i></button> 
                                 <button class="btn btn-sm btn-success"><i class="fa fa-edit"></i></button>
                                 <button class="btn btn-sm btn-danger mx-1"><i class="fa fa-trash"></i></button>
                             </td>

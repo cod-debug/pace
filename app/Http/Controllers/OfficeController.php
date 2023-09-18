@@ -17,13 +17,13 @@ class OfficeController extends Controller
     }
 
     public function list(){
-        $list = OfficeModel::where('status', 'active')->orderBy('created_at', 'DESC')->paginate(10);
+        $list = OfficeModel::where('status', 'active')->orderBy('name', 'ASC')->paginate(10);
 
         return json_encode($list);
     }
 
     public function listAll(){
-        $list = OfficeModel::where('status', 'active')->get();
+        $list = OfficeModel::where('status', 'active')->orderBy('name', 'ASC')->get();
 
         return json_encode($list);
     }
