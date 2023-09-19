@@ -6,6 +6,7 @@
                     <h4><i class="fa fa-file"></i> Add Employee Record</h4>
                     <a href="/employee" class="btn btn-secondary"><i class="fa fa-users"></i> Back to Employee List</a>
                 </div>
+                <div class="border border-muted my-2"></div>
                 <div v-if="employee_data" class="my-4 mx-2">
                     <form @submit.prevent="submitForm" class="row">
                         <div class="form-group col-md-6 py-2">
