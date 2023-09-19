@@ -39,7 +39,7 @@
                                 {{ item.office.name }}
                             </td>
                             <td class="text-right">
-                                <button class="btn btn-sm btn-primary mx-4"><i class="fas fa-file-invoice"></i></button> 
+                                <a :href="`/employee/record/${item.id}`" class="btn btn-sm btn-primary mx-4"><i class="fas fa-file-invoice"></i></a> 
                                 <button class="btn btn-sm btn-success"><i class="fa fa-edit"></i></button>
                                 <button class="btn btn-sm btn-danger mx-1"><i class="fa fa-trash"></i></button>
                             </td>

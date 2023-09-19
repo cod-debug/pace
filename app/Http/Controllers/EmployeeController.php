@@ -17,6 +17,16 @@ class EmployeeController extends Controller
         return view('employees.add');
     } 
 
+    public function record($id){
+        return view('employees.record', compact('id'));
+    } 
+
+    public function singleEmployee($id){
+        $employee = EmployeeModel::with('office')->find($id);
+
+        return json_encode($employee);
+    }
+
     public function store(Request $request){
         
         $validated = $request->validate([

@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Auth::routes();
+
 Route::get('/', function () {
     return view('welcome');
 })->name('dashboard');
@@ -30,5 +32,8 @@ Route::group(['prefix' => 'office', 'as' => 'office.'], function () {
 Route::group(['prefix' => 'employee', 'as' => 'employee.'], function () {
     Route::get('/', 'EmployeeController@index')->name('list');
     Route::get('/add', 'EmployeeController@add')->name('add');
+    Route::get('/record/{id}', 'EmployeeController@record')->name('record');
     Route::get('/list-paginated', 'EmployeeController@listPaginated')->name('list-paginated');
 });
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

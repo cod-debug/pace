@@ -8,6 +8,7 @@ import OfficeAdd from './components/Office/OfficeAdd.vue';
 
 import EmployeeList from './components/Employee/EmployeeList.vue';
 import EmployeeAdd from './components/Employee/EmployeeAdd.vue';
+import EmployeeRecord from './components/Employee/EmployeeRecord.vue';
 
 import Swal from 'sweetalert2';
 
@@ -18,6 +19,7 @@ const app = createApp({
         AppOfficeAdd: OfficeAdd,
         AppEmployeeList: EmployeeList,
         AppEmployeeAdd: EmployeeAdd,
+        AppEmployeeRecord: EmployeeRecord,
     }
 });
 

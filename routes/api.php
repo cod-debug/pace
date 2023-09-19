@@ -20,4 +20,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::group(['prefix' => 'employee', 'as' => 'employee.'], function () {
     Route::post('store', 'EmployeeController@store');
+    Route::get('getOne/{id}', 'EmployeeController@singleEmployee');
 });
