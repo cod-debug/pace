@@ -37,13 +37,13 @@
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td><input type="date" class="form-control" /></td>
-                                        <td><input type="text" class="form-control" /></td>
-                                        <td><input type="number" class="form-control" /></td>
-                                        <td><input type="number" class="form-control" /></td>
-                                        <td><input type="number" class="form-control" /></td>
-                                        <td><input type="text" class="form-control" /></td>
-                                        <td><input type="number" class="form-control" /></td>
+                                        <td><input type="date" v-model="form_date" class="form-control" /></td>
+                                        <td><input type="text" v-model="particulars" class="form-control" /></td>
+                                        <td><input type="number" v-model="union_dues" class="form-control" /></td>
+                                        <td><input type="number" v-model="ip_funds" class="form-control" /></td>
+                                        <td><input type="number" v-model="fa" class="form-control" /></td>
+                                        <td><input type="text" v-model="notes" class="form-control" /></td>
+                                        <td><input type="number" :value="union_dues+ip_funds+fa" readonly class="form-control" /></td>
                                         <td class="text-right">
                                             <button class="btn btn-primary my-auto"><i class="fa fa-save"></i></button>
                                         </td>
@@ -76,9 +76,9 @@
 
             form_date: null,
             particulars: null,
-            union_dues: null,
-            ip_funds: null,
-            fa: null,
+            union_dues: 75,
+            ip_funds: 25,
+            fa: 90,
             notes: null,
             total: null,
 
