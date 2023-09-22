@@ -56,6 +56,15 @@
                         <li><a class="link_name" href="#">Employees</a></li>
                     </ul>
                 </li>
+                <li>
+                    <a href="{{route('report.index')}}">
+                        <i class='bx bxs-report'></i>
+                        <span class="link_name">Reports</span>
+                    </a>
+                    <ul class="sub-menu blank">
+                        <li><a class="link_name" href="#">Reports</a></li>
+                    </ul>
+                </li>
                 {{-- <li>
                     <div class="icon-link">
                     <a href="#">

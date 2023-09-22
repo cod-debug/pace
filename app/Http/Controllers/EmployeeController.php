@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\EmployeeModel;
 use App\Models\DependentModel;
+use App\Models\EmployeeRecordModel;
+use Illuminate\Validation\Rule;
 
 class EmployeeController extends Controller
 {
@@ -66,5 +68,39 @@ class EmployeeController extends Controller
         $list = EmployeeModel::where('status', 'active')->with('office')->orderBy('full_name', 'ASC')->paginate(10);
 
         return json_encode($list);
+    }
+
+    public function storeRecord(Request $request){
+        $validated = $request->validate([
+            'employee_id' => 'required|numeric',
+            'payment_date' => [
+                'required',
+                Rule::unique('employee_record')->where(function ($query) use ($request) {
+                    return $query->where('employee_id', $request->input('employee_id'));
+                }),
+            ],
+            'particulars' => 'required',
+            'union_dues' => 'required|numeric',
+            'ip_funds' => 'required|numeric',
+            'fa' => 'required|numeric',
+            'notes' => 'max:255'
+        ], [
+            "payment_date.unique" => "Employee already had this record."
+        ]);
+
+        $record = EmployeeRecordModel::create($validated);
+
+        $res = [
+            'message' => 'Successfully saved employee\'s record.'
+        ];
+
+        return json_encode($res);
+
+    }
+
+    public function getRecord($id){
+        $employees_record = EmployeeRecordModel::where('employee_id', $id)->orderBy('payment_date', 'DESC')->paginate(10);
+
+        return json_encode($employees_record);
     }
 }

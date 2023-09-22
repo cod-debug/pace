@@ -10,6 +10,8 @@ import EmployeeList from './components/Employee/EmployeeList.vue';
 import EmployeeAdd from './components/Employee/EmployeeAdd.vue';
 import EmployeeRecord from './components/Employee/EmployeeRecord.vue';
 
+import ReportIndex from './components/Report/ReportIndex.vue';
+
 import Swal from 'sweetalert2';
 
 const app = createApp({
@@ -20,6 +22,7 @@ const app = createApp({
         AppEmployeeList: EmployeeList,
         AppEmployeeAdd: EmployeeAdd,
         AppEmployeeRecord: EmployeeRecord,
+        AppReportIndex: ReportIndex,
     }
 });
 

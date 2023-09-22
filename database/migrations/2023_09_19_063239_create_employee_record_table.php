@@ -13,10 +13,13 @@ return new class extends Migration
     {
         Schema::create('employee_record', function (Blueprint $table) {
             $table->id();
-            $table->date('payment_date');
             $table->foreignId('employee_id')->references('id')->on('employees');
-            $table->string('name');
-            $table->string('relationship');
+            $table->date('payment_date');
+            $table->string('particulars');
+            $table->float('union_dues');
+            $table->float('ip_funds');
+            $table->float('fa');
+            $table->string('notes')->nullable();
             $table->string('status')->default('active');
             $table->timestamps();
         });

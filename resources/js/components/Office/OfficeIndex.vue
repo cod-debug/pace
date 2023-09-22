@@ -15,7 +15,7 @@
                                 <button type="button" v-if="!show_form" class="btn btn-sm btn-success" @click="toggleShowForm"><i class="fa fa-plus-circle"></i></button>
                                 <button type="button" v-if="show_form" class="btn btn-sm btn-danger" @click="toggleShowForm"><i class="fa fa-times-circle"></i></button>
                             </th>
-                            <th width="45%">Desciption</th>
+                            <th width="30%">Desciption</th>
                             <th class="text-right">Action</th>
                         </tr>
                     </thead>
@@ -39,8 +39,9 @@
                                 <button class="btn btn-success btn-sm mx-1" @click="update(item)" v-if="selected_id != item.id || is_update"><i class="fa fa-edit"></i></button>
                                 <button class="btn btn-danger btn-sm" @click="confirmDelete(item)" v-if="selected_id != item.id || is_update"><i class="fa fa-trash"></i></button>
                                 <div class="" v-if="show_confirm_delete && selected_id == item.id">
-                                    <button class="btn btn-danger btn-sm" @click="removeOffice(item.id)" title="Confirm delete?"><i class="fa fa-check-circle"></i></button>
-                                    <button class="btn btn-success btn-sm mx-1" @click="cancelDelete" title="Cancel delete?"><i class="fa fa-times-circle"></i></button>
+                                    <label class="mx-2">Are you sure?</label>
+                                    <button class="btn btn-outline-danger btn-sm" @click="removeOffice(item.id)" title="Confirm delete?"><i class="fa fa-check-circle"></i> Yes</button>
+                                    <button class="btn btn-outline-secondary btn-sm mx-1" @click="cancelDelete" title="Cancel delete?"><i class="fa fa-times-circle"></i> No</button>
                                 </div>
                             </td>
                         </tr>

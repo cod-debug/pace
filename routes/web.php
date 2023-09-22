@@ -36,4 +36,8 @@ Route::group(['prefix' => 'employee', 'as' => 'employee.'], function () {
     Route::get('/list-paginated', 'EmployeeController@listPaginated')->name('list-paginated');
 });
 
+Route::group(['prefix' => 'report', 'as' => 'report.'], function () {
+    Route::get('/', 'ReportController@index')->name('index');
+});
+
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

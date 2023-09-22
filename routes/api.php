@@ -21,4 +21,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::group(['prefix' => 'employee', 'as' => 'employee.'], function () {
     Route::post('store', 'EmployeeController@store');
     Route::get('getOne/{id}', 'EmployeeController@singleEmployee');
+    Route::post('save-record', 'EmployeeController@storeRecord');
+    Route::get('get-record/{id}', 'EmployeeController@getRecord');
+});
+
+Route::group(['prefix' => 'report', 'as' => 'report.'], function () {
+    Route::post('generate', 'ReportController@generateReportApi');
 });
