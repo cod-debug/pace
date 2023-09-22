@@ -11,6 +11,7 @@ import EmployeeAdd from './components/Employee/EmployeeAdd.vue';
 import EmployeeRecord from './components/Employee/EmployeeRecord.vue';
 
 import ReportIndex from './components/Report/ReportIndex.vue';
+import AgencyFeeIndex from './components/AgencyFee/AgencyFeeIndex.vue';
 
 import Swal from 'sweetalert2';
 
@@ -23,6 +24,7 @@ const app = createApp({
         AppEmployeeAdd: EmployeeAdd,
         AppEmployeeRecord: EmployeeRecord,
         AppReportIndex: ReportIndex,
+        AppAgencyFeeIndex: AgencyFeeIndex,
     }
 });
 

@@ -141,33 +141,6 @@
                 this.getRecords();
                 this.payment_date = this.current_date;
             },
-            getTotalUnionDues(rec){
-                let total = 0;
-
-                rec.map((r) => {
-                    total+=r.union_dues
-                });
-
-                return total;
-            },
-            getTotalIPFunds(rec){
-                let total = 0;
-
-                rec.map((r) => {
-                    total+=r.ip_funds
-                });
-
-                return total;
-            },
-            getTotalFA(rec){
-                let total = 0;
-
-                rec.map((r) => {
-                    total+=r.fa
-                });
-
-                return total;
-            },
             async getEmployeeDetails(){
                 try {
                     this.loading_employee_info = true;
