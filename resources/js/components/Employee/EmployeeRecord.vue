@@ -141,6 +141,16 @@
                 this.getRecords();
                 this.payment_date = this.current_date;
             },
+
+            resetForm(){
+                this.payment_date = this.current_date;
+                this.particulars = '';
+                this.union_dues = 75;
+                this.ip_funds = 25;
+                this.fa = 90;
+                this.notes = '';
+            },
+
             async getEmployeeDetails(){
                 try {
                     this.loading_employee_info = true;
@@ -199,6 +209,7 @@
                             icon: 'success'
                         });
                         this.getRecords();
+                        this.resetForm();
                     } else {
                         this.$swal({
                             title: 'Error',

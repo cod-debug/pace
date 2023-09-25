@@ -201,7 +201,7 @@
                 let res = await this.$axios('post', `/api/report/generate`, fd);
                 
                 if([200, 201].includes(res.status)){
-                    this.report_data = res.data.data;
+                    this.report_data = res.data;
                 } else {
                     this.$swal({
                         title: 'Error',

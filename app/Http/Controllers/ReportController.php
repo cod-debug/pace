@@ -34,7 +34,7 @@ class ReportController extends Controller
         })
         ->orderBy('payment_date', 'DESC')
         ->orderBy('employee_id', 'ASC')
-        ->with('employee')->paginate(10);
+        ->with('employee')->get();
 
         return json_encode($res);
     }
