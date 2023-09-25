@@ -70,7 +70,33 @@
             },
 
             async submitForm(){
+                let payload = {
+                    full_name: this.full_name,
+                    payment_date: this.payment_date,
+                    union_dues: this.union_dues,
+                    ip_funds: this.ip_fund,
+                    fa: this.fa,
+                    notes: this.notes,
+                }
 
+                let fd = this.payloadToFormdata(payload);
+
+                let res = await this.$axios('post', '/api/agency_fee/store', fd);
+
+                if([200, 201].includes(res.status)){
+                    this.$swal({
+                        title: 'Success',
+                        text: res.data.message,
+                        icon: 'success'
+                    });
+                    this.resetfForm();
+                } else {
+                    this.$swal({
+                        title: 'Error',
+                        text: res.response.data.message,
+                        icon: 'error'
+                    });
+                }
             }
         },
 

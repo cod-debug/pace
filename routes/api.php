@@ -28,3 +28,8 @@ Route::group(['prefix' => 'employee', 'as' => 'employee.'], function () {
 Route::group(['prefix' => 'report', 'as' => 'report.'], function () {
     Route::post('generate', 'ReportController@generateReportApi');
 });
+
+
+Route::group(['prefix' => 'agency_fee', 'as' => 'agency_fee.'], function () {
+    Route::post('store', 'AgencyFeeController@storeAgencyFee');
+});
