@@ -1,6 +1,7 @@
 <template>
     <div>
         <div class="container">
+            {{ auth.type }}
             <div class="bg-white shadow-lg p-3">
                 <div class="d-flex justify-content-between align-items-center">
                     <h4><i class="fa fa-users"></i> List of Employees</h4>
@@ -58,6 +59,9 @@
 <script>
     import Loader from '../Reusables/Loader.vue';
     export default {
+        props: {
+            auth: Object,
+        },
         data: () => ({
             search: '',
             list_data: [],

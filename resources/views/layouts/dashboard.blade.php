@@ -15,7 +15,10 @@
     @vite(['resources/js/app.js', 'resources/css/app.css', 'resources/css/font-awesome.min.css', 'resources/js/font-awesome.min.js', 'resources/css/sidebar.min.css'])
 
 </head>
-
+@php
+    $role = auth()->user()->type;
+    $is_admin = $role === 'admin';
+@endphp
 <body>
     <div class="s-layout"><div class="layout has-sidebar fixed-sidebar fixed-header">
         <div class="sidebar">
@@ -38,15 +41,18 @@
                         <li><a class="link_name" href="#">Dashboard</a></li>
                     </ul>
                 </li>
-                <li>
-                    <a href="{{route('office.list')}}">
-                        <i class='bx bx-building'></i>
-                        <span class="link_name">Departments</span>
-                    </a>
-                    <ul class="sub-menu blank">
-                        <li><a class="link_name" href="#">Departments</a></li>
-                    </ul>
-                </li>
+                @if($is_admin)
+                    <li>
+                        <a href="{{route('office.list')}}">
+                            <i class='bx bx-building'></i>
+                            <span class="link_name">Departments</span>
+                        </a>
+                        <ul class="sub-menu blank">
+                            <li><a class="link_name" href="#">Departments</a></li>
+                        </ul>
+                    </li>
+                @endif
+                <!-- THE ONLY ROUTE FOR ALL -->
                 <li>
                     <a href="{{route('employee.list')}}">
                         <i class='bx bx-user'></i>
@@ -56,22 +62,34 @@
                         <li><a class="link_name" href="#">Employees</a></li>
                     </ul>
                 </li>
+
+                @if($is_admin)
+                    <li>
+                        <a href="{{route('agency_fee.index')}}">
+                            <i class='bx bx-credit-card-front'></i>
+                            <span class="link_name">Agency Fees</span>
+                        </a>
+                        <ul class="sub-menu blank">
+                            <li><a class="link_name" href="#">Agency Fees</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="{{route('report.index')}}">
+                            <i class='bx bxs-report'></i>
+                            <span class="link_name">Reports</span>
+                        </a>
+                        <ul class="sub-menu blank">
+                            <li><a class="link_name" href="#">Reports</a></li>
+                        </ul>
+                    </li>
+                @endif
                 <li>
-                    <a href="{{route('agency_fee.index')}}">
-                        <i class='bx bx-credit-card-front'></i>
-                        <span class="link_name">Agency Fees</span>
+                    <a href="#" onclick="logout()">
+                        <i class='bx bx-power-off'></i>
+                        <span class="link_name">Logout</span>
                     </a>
                     <ul class="sub-menu blank">
-                        <li><a class="link_name" href="#">Agency Fees</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="{{route('report.index')}}">
-                        <i class='bx bxs-report'></i>
-                        <span class="link_name">Reports</span>
-                    </a>
-                    <ul class="sub-menu blank">
-                        <li><a class="link_name" href="#">Reports</a></li>
+                        <li><a class="link_name" href="#">Logout</a></li>
                     </ul>
                 </li>
                 {{-- <li>
@@ -92,6 +110,9 @@
             </ul>
         </div>
         <section class="home-section">
+            <form method="post" action="{{ route('logout') }}" id="logoutForm" style="display: none!important;">
+                @csrf
+            </form>
             <div class="home-content">
                 <i class='bx bx-menu'></i>
                 <span class="text">
@@ -109,4 +130,9 @@
     <script src="/assets/js/sidebar.js"></script>
     <script src="/assets/js/bootstrap.min.js"></script>
     <script src="/assets/js/bootstrap-bundle.min.js"></script>
+    <script>
+        function logout(){
+            document.getElementById('logoutForm').submit();
+        }
+    </script>
 </html>

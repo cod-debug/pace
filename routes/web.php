@@ -17,9 +17,9 @@ Auth::routes();
 
 Route::get('/', function () {
     return view('welcome');
-})->name('dashboard');
+})->name('dashboard')->middleware('logged_in');
 
-Route::group(['prefix' => 'office', 'as' => 'office.'], function () {
+Route::group(['prefix' => 'office', 'as' => 'office.', 'middleware' => ['logged_in']], function () {
     Route::get('/', 'OfficeController@index')->name('list');
     Route::get('/add', 'OfficeController@add')->name('add');
     Route::post('/store', 'OfficeController@store')->name('store');
@@ -29,18 +29,18 @@ Route::group(['prefix' => 'office', 'as' => 'office.'], function () {
     Route::get('/list-all-api', 'OfficeController@listAll')->name('list-all-api'); 
 });
 
-Route::group(['prefix' => 'employee', 'as' => 'employee.'], function () {
+Route::group(['prefix' => 'employee', 'as' => 'employee.', 'middleware' => ['logged_in']], function () {
     Route::get('/', 'EmployeeController@index')->name('list');
     Route::get('/add', 'EmployeeController@add')->name('add');
     Route::get('/record/{id}', 'EmployeeController@record')->name('record');
     Route::get('/list-paginated', 'EmployeeController@listPaginated')->name('list-paginated');
 });
 
-Route::group(['prefix' => 'report', 'as' => 'report.'], function () {
+Route::group(['prefix' => 'report', 'as' => 'report.', 'middleware' => ['logged_in']], function () {
     Route::get('/', 'ReportController@index')->name('index');
 });
 
-Route::group(['prefix' => 'agency_fee', 'as' => 'agency_fee.'], function () {
+Route::group(['prefix' => 'agency_fee', 'as' => 'agency_fee.', 'middleware' => ['logged_in']], function () {
     Route::get('/', 'AgencyFeeController@index')->name('index');
 });
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
