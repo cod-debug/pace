@@ -64,8 +64,11 @@ class EmployeeController extends Controller
         return json_encode($res);
     }
 
-    public function listPaginated(){
-        $list = EmployeeModel::where('status', 'active')->with('office')->orderBy('full_name', 'ASC')->paginate(10);
+    public function listPaginated(Request $request){
+        $list = EmployeeModel::where('status', 'active')
+        ->where('full_name', 'LIKE', '%'.$request->search.'%')
+        ->with('office')
+        ->orderBy('full_name', 'ASC')->paginate($request->limit);
 
         return json_encode($list);
     }

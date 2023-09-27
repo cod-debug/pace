@@ -1,7 +1,6 @@
 <template>
     <div>
         <div class="container">
-            {{ auth.type }}
             <div class="bg-white shadow-lg p-3">
                 <div class="d-flex justify-content-between align-items-center">
                     <h4><i class="fa fa-users"></i> List of Employees</h4>
@@ -23,30 +22,43 @@
                         </div>
                     </div>
                 </form>
-                <table class="table table-striped" v-if="!is_loading_list">
-                    <thead>
-                        <tr>
-                            <th width="40%">Name</th>
-                            <th width="40%">Office</th>
-                            <th class="text-right"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(item, key) in list_data.data" :key="key">
-                            <td>
-                                {{ item.full_name }}
-                            </td>
-                            <td>
-                                {{ item.office.name }}
-                            </td>
-                            <td class="text-right">
-                                <a :href="`/employee/record/${item.id}`" class="btn btn-sm btn-primary mx-4"><i class="fas fa-file-invoice"></i></a> 
-                                <button class="btn btn-sm btn-success"><i class="fa fa-edit"></i></button>
-                                <button class="btn btn-sm btn-danger mx-1"><i class="fa fa-trash"></i></button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div v-if="!is_loading_list">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th width="40%">Name</th>
+                                <th width="40%">Office</th>
+                                <th class="text-right"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(item, key) in list_data.data" :key="key">
+                                <td>
+                                    {{ item.full_name }}
+                                </td>
+                                <td>
+                                    {{ item.office.name }}
+                                </td>
+                                <td class="text-right">
+                                    <a :href="`/employee/record/${item.id}`" :class="`btn btn-sm btn-primary ${auth_data.type === 'admin' ? 'mx-4': ''}`"><i class="fas fa-file-invoice"></i></a> 
+                                    <button class="btn btn-sm btn-success" v-if="auth_data.type === 'admin'"><i class="fa fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-danger mx-1" v-if="auth_data.type === 'admin'"><i class="fa fa-trash"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="text-muted">
+                            <small>Showing {{ list_data.from }} to {{ list_data.to }} of {{ list_data.total }}</small>
+                        </div>
+                        <vue-awesome-paginate v-model="page"
+                            :total-items="list_data.total"
+                            :items-per-page="limit"
+                            :max-pages-shown="5"
+                            :current-page="1"
+                            :on-click="getList"></vue-awesome-paginate>
+                    </div>
+                </div>
                 <div class="text-center" v-else>
                     <app-loader />
                 </div>
@@ -55,33 +67,40 @@
     </div>
 </template>
 
-
 <script>
     import Loader from '../Reusables/Loader.vue';
     export default {
         props: {
-            auth: Object,
+            auth: String,
         },
         data: () => ({
             search: '',
+            page: 1,
+            limit: 10,
             list_data: [],
             is_loading_list: false,
         }),
         components: {
             AppLoader: Loader,
         },
+        computed:{
+            auth_data(){
+                return JSON.parse(this.auth);
+            }
+        },
         mounted(){
             this.getList();
         },
         methods: {
             async submitSearch() {
-
+                this.page = 1;
+                this.getList();
             },
 
             async getList(){
                 try {
                     this.is_loading_list = true;
-                    let {data, status} = await this.$axios('get','/employee/list-paginated');
+                    let {data, status} = await this.$axios('get',`/employee/list-paginated?search=${this.search}&page=${this.page}&limit=${this.limit}`);
                     
                     if([200, 201].includes(status)){
                         this.list_data = data;

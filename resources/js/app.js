@@ -12,6 +12,7 @@ import EmployeeRecord from './components/Employee/EmployeeRecord.vue';
 
 import ReportIndex from './components/Report/ReportIndex.vue';
 import AgencyFeeIndex from './components/AgencyFee/AgencyFeeIndex.vue';
+import VueAwesomePaginate from "vue-awesome-paginate";
 
 import Swal from 'sweetalert2';
 
@@ -27,6 +28,8 @@ const app = createApp({
         AppAgencyFeeIndex: AgencyFeeIndex,
     }
 });
+
+app.use(VueAwesomePaginate);
 
 app.mixin({
     methods:{
