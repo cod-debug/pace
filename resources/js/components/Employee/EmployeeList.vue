@@ -40,9 +40,17 @@
                                     {{ item.office.name }}
                                 </td>
                                 <td class="text-right">
-                                    <a :href="`/employee/record/${item.id}`" :class="`btn btn-sm btn-primary ${auth_data.type === 'admin' ? 'mx-4': ''}`"><i class="fas fa-file-invoice"></i></a> 
-                                    <button class="btn btn-sm btn-success" v-if="auth_data.type === 'admin'"><i class="fa fa-edit"></i></button>
-                                    <button class="btn btn-sm btn-danger mx-1" v-if="auth_data.type === 'admin'"><i class="fa fa-trash"></i></button>
+                                    <div class="text-right" v-if="item.id !== selected_id">
+                                        <a :href="`/employee/record/${item.id}`" :class="`btn btn-sm btn-primary ${auth_data.type === 'admin' ? 'mx-4': ''}`"><i class="fas fa-file-invoice"></i></a> 
+                                        <button class="btn btn-sm btn-success" v-if="auth_data.type === 'admin'"><i class="fa fa-edit"></i></button>
+                                        <button class="btn btn-sm btn-danger mx-1" v-if="auth_data.type === 'admin'"  @click="confirmDelete(item)" ><i class="fa fa-trash"></i></button>
+                                    </div>
+                                    <div v-if="show_confirm_delete && item.id === selected_id">
+                                        <label class="mb-2"><input type="password" v-model="password" class="form-control" placeholder="Confirm Password"/></label>
+                                        <br />
+                                        <button class="btn btn-outline-danger btn-sm" @click="checkAuth(item.id)" title="Confirm delete?"><i class="fa fa-check-circle"></i> Yes</button>
+                                        <button class="btn btn-outline-secondary btn-sm mx-1" @click="cancelDelete" title="Cancel delete?"><i class="fa fa-times-circle"></i> No</button>
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>
@@ -79,6 +87,9 @@
             limit: 10,
             list_data: [],
             is_loading_list: false,
+            selected_id: null,
+            password: '',
+            show_confirm_delete: false,
         }),
         components: {
             AppLoader: Loader,
@@ -90,11 +101,36 @@
         },
         mounted(){
             this.getList();
+            this.auth_user = JSON.parse(this.auth);
         },
         methods: {
             async submitSearch() {
                 this.page = 1;
                 this.getList();
+            },
+
+            async checkAuth(id){
+                let payload = {
+                    email: this.auth_user.email,
+                    password: this.password,
+                }
+
+                let fd = this.payloadToFormdata(payload);
+                
+                let res = await this.$axios('post', `/api/auth/check`, fd);
+                if([200, 201].includes(res.status)){
+                    this.$swal({
+                        title: 'Warning',
+                        text: 'Correct password but feature is under development',
+                        icon: 'warning'
+                    });
+                } else {
+                    this.$swal({
+                        title: 'Error',
+                        text: 'Invalid password',
+                        icon: 'error'
+                    });
+                }
             },
 
             async getList(){
@@ -119,6 +155,15 @@
                     });
                 }
                 this.is_loading_list = false;
+            },
+            confirmDelete(item){
+                this.selected_id = item.id;
+                this.password = "";
+                this.show_confirm_delete = true;
+            },
+            cancelDelete(){
+                this.selected_id = null;
+                this.show_confirm_delete = false;
             },
         },
     }
