@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\EmployeeRecordModel;
 use Illuminate\Support\Carbon;
+
+use App\Models\EmployeeRecordModel;
+use App\Models\AgencyFeeModel;
 
 class ReportController extends Controller
 {
@@ -26,16 +28,22 @@ class ReportController extends Controller
         $date_to = Carbon::create($request->date_to);
 
 
-        $res = EmployeeRecordModel::whereBetween('payment_date', [$date_from, $date_to])
+        $employee_record = EmployeeRecordModel::whereBetween('payment_date', [$date_from, $date_to])
         ->whereHas('employee', function ($query) use($office) {
             if($office){
                 $query->where('office_id', $office);
             }
         })
         ->orderBy('payment_date', 'DESC')
-        ->orderBy('employee_id', 'ASC')
         ->with('employee')->get();
 
+        $agency_fee = AgencyFeeModel::whereBetween('payment_date', [$date_from, $date_to])->orderBy('payment_date', 'DESC')->get();
+        
+        $res = [
+            "employee_record" => $employee_record,
+            "agency_fee" => $agency_fee
+        ];
+        
         return json_encode($res);
     }
 }

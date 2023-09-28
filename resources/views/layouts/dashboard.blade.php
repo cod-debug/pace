@@ -62,17 +62,17 @@
                         <li><a class="link_name" href="#">Employees</a></li>
                     </ul>
                 </li>
+                <li>
+                    <a href="{{route('agency_fee.index')}}">
+                        <i class='bx bx-credit-card-front'></i>
+                        <span class="link_name">Agency Fees</span>
+                    </a>
+                    <ul class="sub-menu blank">
+                        <li><a class="link_name" href="#">Agency Fees</a></li>
+                    </ul>
+                </li>
 
                 @if($is_admin)
-                    <li>
-                        <a href="{{route('agency_fee.index')}}">
-                            <i class='bx bx-credit-card-front'></i>
-                            <span class="link_name">Agency Fees</span>
-                        </a>
-                        <ul class="sub-menu blank">
-                            <li><a class="link_name" href="#">Agency Fees</a></li>
-                        </ul>
-                    </li>
                     <li>
                         <a href="{{route('report.index')}}">
                             <i class='bx bxs-report'></i>

@@ -8,7 +8,17 @@
                 <div class="border border-muted my-2"></div>
                 <div class="mt-4">
                     <form class="row form" @submit.prevent="submitForm">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Report Type</label>
+                                <select class="form-select" v-model="report_type">
+                                    <option value="all">All</option>
+                                    <option value="employee">Employee Record</option>
+                                    <option value="agency">Agency Fee</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3" v-if="['all', 'employee'].includes(report_type)">
                             <div class="form-group">
                                 <label>Office</label>
                                 <select class="form-select" v-model="office">
@@ -17,13 +27,13 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label>Date From: </label>
                                 <input type="date" v-model="date_from" required class="form-control" />
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label>Date To: </label>
                                 <input type="date" v-model="date_to" required class="form-control" />
@@ -46,7 +56,8 @@
                     <div v-if="is_generating" class="text-center">
                         <app-loader />
                     </div>
-                    <div v-else class="table-responsive" style="max-height: 400px!important; overflow: auto;">
+                    <div class="table-responsive" style="max-height: 400px!important; overflow: auto;"  v-if="['all', 'employee'].includes(report_type) && !is_generating">
+                        <h4>Employee Record</h4>
                         <table class="table table-striped">
                             <thead style="position: sticky; top: 0; background-color: white;">
                                 <tr>
@@ -116,6 +127,65 @@
 
                         </table>
                     </div>
+                    <div class="table-responsive" style="max-height: 400px!important; overflow: auto;"  v-if="['all', 'agency'].includes(report_type) && !is_generating">
+                        <h4>Agency Fee</h4>
+                        <table class="table table-striped">
+                            <thead style="position: sticky; top: 0; background-color: white;">
+                                <tr>
+                                    <th>Payment Date</th>
+                                    <th>Name</th>
+                                    <th>Notes</th>
+                                    <th class="text-right">Union Dues</th>
+                                    <th class="text-right">I.P. Funds</th>
+                                    <th class="text-right">FA</th>
+                                    <th class="text-right">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(record, record_key) in agency_fee_data" :key="record_key">
+                                    <td>
+                                        {{ record.payment_date }}
+                                    </td>
+                                    <td>
+                                        {{ record.full_name }}
+                                    </td>
+                                    <td>
+                                        {{ record.notes || '--' }}
+                                    </td>
+                                    <td class="text-right bg-info fw-bold text-white">
+                                        {{ record.union_dues }}
+                                    </td>
+                                    <td class="text-right bg-info fw-bold text-white">
+                                        {{ record.ip_funds }}
+                                    </td>
+                                    <td class="text-right bg-info fw-bold text-white">
+                                        {{ record.fa }}
+                                    </td>
+                                    <td class="text-right bg-info fw-bold text-white">
+                                        {{ getRowtotal(record) }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot style="position: sticky; bottom: 0; background-color: white;">
+                                <tr>
+                                    <td colspan="3"></td>
+                                    <td class="text-right fw-bold text-success" style="font-size: 16pt;">
+                                        {{ getTotalUnionDues(agency_fee_data) }}
+                                    </td>
+                                    <td class="text-right fw-bold text-success" style="font-size: 16pt;">
+                                        {{ getTotalIPFunds(agency_fee_data) }}
+                                    </td>
+                                    <td class="text-right fw-bold text-success" style="font-size: 16pt;">
+                                        {{ getTotalFA(agency_fee_data) }}
+                                    </td>
+                                    <td class="text-right fw-bold text-success" style="font-size: 16pt;">
+                                        {{ getAgencyTotal }}
+                                    </td>
+                                </tr>
+                            </tfoot>
+
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -127,6 +197,7 @@
     export default {
         data: () => ({
             office: "",
+            report_type: "all",
             date_from: null,
             date_to: null,
 
@@ -134,6 +205,7 @@
             is_generating: false,
 
             report_data: [],
+            agency_fee_data: [],
             office_list: [],
         }),
         components: {
@@ -144,6 +216,17 @@
                 let total = 0;
 
                 this.report_data.map((rec) => {
+                    total+=rec.union_dues;
+                    total+=rec.ip_funds;
+                    total+=rec.fa;
+                });
+
+                return total.toLocaleString();
+            },
+            getAgencyTotal(){
+                let total = 0;
+
+                this.agency_fee_data.map((rec) => {
                     total+=rec.union_dues;
                     total+=rec.ip_funds;
                     total+=rec.fa;
@@ -201,7 +284,8 @@
                 let res = await this.$axios('post', `/api/report/generate`, fd);
                 
                 if([200, 201].includes(res.status)){
-                    this.report_data = res.data;
+                    this.report_data = res.data.employee_record;
+                    this.agency_fee_data = res.data.agency_fee;
                 } else {
                     this.$swal({
                         title: 'Error',

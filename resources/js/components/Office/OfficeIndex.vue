@@ -3,7 +3,7 @@
         <div class="container">
             <div class="bg-white shadow-lg p-3">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h4><i class="fa fa-building"></i> List of Offices</h4>
+                    <h4><i class="fa fa-building"></i> List of Offices </h4>
                 </div>
                 <div class="border border-muted my-2"></div>
 
@@ -39,8 +39,9 @@
                                 <button class="btn btn-success btn-sm mx-1" @click="update(item)" v-if="selected_id != item.id || is_update"><i class="fa fa-edit"></i></button>
                                 <button class="btn btn-danger btn-sm" @click="confirmDelete(item)" v-if="selected_id != item.id || is_update"><i class="fa fa-trash"></i></button>
                                 <div class="" v-if="show_confirm_delete && selected_id == item.id">
-                                    <label class="mx-2">Are you sure?</label>
-                                    <button class="btn btn-outline-danger btn-sm" @click="removeOffice(item.id)" title="Confirm delete?"><i class="fa fa-check-circle"></i> Yes</button>
+                                    <label class="mb-2"><input type="password" v-model="password" class="form-control" placeholder="Confirm Password"/></label>
+                                    <br />
+                                    <button class="btn btn-outline-danger btn-sm" @click="checkAuth(item.id)" title="Confirm delete?"><i class="fa fa-check-circle"></i> Yes</button>
                                     <button class="btn btn-outline-secondary btn-sm mx-1" @click="cancelDelete" title="Cancel delete?"><i class="fa fa-times-circle"></i> No</button>
                                 </div>
                             </td>
@@ -59,6 +60,7 @@
 <script>
     import Loader from '../Reusables/Loader.vue';
     export default {
+        props: ['auth'],
         data: () => ({
             name: '',
             description: '',
@@ -68,6 +70,8 @@
             is_update: false,
             show_confirm_delete: false,
             show_form: false,
+            auth_user: null,
+            password: '',
         }),
         components: {
             AppLoader: Loader,
@@ -111,6 +115,27 @@
                     });
                 }
             },
+
+            async checkAuth(id){
+                let payload = {
+                    email: this.auth_user.email,
+                    password: this.password,
+                }
+
+                let fd = this.payloadToFormdata(payload);
+                
+                let res = await this.$axios('post', `/api/auth/check`, fd);
+                if([200, 201].includes(res.status)){
+                    this.removeOffice(id);
+                } else {
+                    this.$swal({
+                        title: 'Error',
+                        text: 'Invalid password',
+                        icon: 'error'
+                    });
+                }
+            },
+
             async removeOffice(id){
                 let payload = {
                     status: 'deactivated',
@@ -135,7 +160,7 @@
                     }
                 } catch (e) {
                     this.$swal({
-                        title: 'Success',
+                        title: 'Error',
                         text: 'Something went wrong during submission. Kindly contact the developer.',
                         icon: 'error'
                     });
@@ -208,6 +233,7 @@
             },
             confirmDelete(item){
                 this.selected_id = item.id;
+                this.password = "";
                 this.show_confirm_delete = true;
             },
             cancelDelete(){
@@ -224,6 +250,7 @@
         },
         mounted(){
             this.getList();
+            this.auth_user = JSON.parse(this.auth);
         },
         computed: {
             disabledSave(){

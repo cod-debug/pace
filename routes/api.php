@@ -33,3 +33,7 @@ Route::group(['prefix' => 'report', 'as' => 'report.'], function () {
 Route::group(['prefix' => 'agency_fee', 'as' => 'agency_fee.'], function () {
     Route::post('store', 'AgencyFeeController@storeAgencyFee');
 });
+
+Route::group(['prefix' => 'auth', 'as' => 'auth.'], function () {
+    Route::post('check', 'CheckAuth@checkAuth');
+});

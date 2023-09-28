@@ -1,5 +1,5 @@
 @extends('layouts.dashboard')
 @section('title', 'Offices')
 @section('content')
-    <app-office />
+    <app-office auth="{{ auth()->user() }}" />
 @endsection
