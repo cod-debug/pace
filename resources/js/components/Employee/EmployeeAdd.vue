@@ -3,11 +3,14 @@
         <div class="container">
             <div class="bg-white shadow-lg p-3">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h4><i class="fa fa-user-plus"></i> Add Employee</h4>
+                    <h4><i class="fa fa-user-plus"></i> {{isUpdate ? 'Update' : 'Add'}} Employee</h4>
                     <a href="/employee" class="btn btn-secondary"><i class="fa fa-users"></i> Employee List</a>
                 </div>
                 <div class="border border-muted my-2"></div>
-                <form class="form mt-2" @submit.prevent="submitForm">
+                <div v-if="loading_employee_info" class="text-center">
+                    <app-loader />
+                </div>
+                <form class="form mt-2" @submit.prevent="submitForm" v-if="!loading_employee_info">
                     <p class="text-right">
                         <strong>Date:</strong> <h5 class="border-bottom border-secondary d-inline-block">{{ formatDate }}</h5>
                     </p>
@@ -72,7 +75,7 @@
                                 <div class="col-md-6 p-2">
                                     <div class="form-group">
                                         <label>EMAIL ADDRESS: </label>
-                                        <input type="text" class="form-control" v-model="email">
+                                        <input type="text" class="form-control" v-model="email_address">
                                     </div>
                                 </div>
                                 <div class="col-md-6 p-2">
@@ -335,8 +338,11 @@ const MARRIED_DEPENDENTS_DEFAULT = [
 
 const SINGLE_DEPENDENT_TYPE_OPTION = ['MOTHER', 'FATHER', 'DESIGNATED', 'CHILD'];
 const MARRIED_DEPENDENT_TYPE_OPTION = ['MOTHER', 'FATHER','SPOUSE', 'CHILD'];
-
+import Loader from '../Reusables/Loader.vue';
     export default {
+        props:[
+            'selected_id'
+        ],
         data: () => ({
             full_name: '',
             office_id: null,
@@ -344,7 +350,7 @@ const MARRIED_DEPENDENT_TYPE_OPTION = ['MOTHER', 'FATHER','SPOUSE', 'CHILD'];
             civil_status: '',
             home_address: '',
             contact_number: '',
-            email: '',
+            email_address: '',
             facebook_account: '',
             birth_date: '',
 
@@ -361,6 +367,9 @@ const MARRIED_DEPENDENT_TYPE_OPTION = ['MOTHER', 'FATHER','SPOUSE', 'CHILD'];
             office_list: [],
             employment_status_list: ['Employed', 'Retired'],
             civil_status_list: ['Single', 'Married', 'Widowed'],
+
+            loading_employee_info: false,
+            employee_data: null,
         }),
         watch: {
 
@@ -404,11 +413,18 @@ const MARRIED_DEPENDENT_TYPE_OPTION = ['MOTHER', 'FATHER','SPOUSE', 'CHILD'];
 
             next_btn_text(){
                 return this.step == this.last_step - 1 ? 'Preview' : 'Next';
+            },
+
+            isUpdate(){
+                return this.selected_id ? true : false;
             }
         },
 
         mounted(){
             this.getOffices();
+            if(this.isUpdate){
+                this.getSpecific();
+            }
         },
 
         methods: {
@@ -422,6 +438,28 @@ const MARRIED_DEPENDENT_TYPE_OPTION = ['MOTHER', 'FATHER','SPOUSE', 'CHILD'];
             removeDependent(key){
                 this.dependents.splice(key, 1);
             },
+            
+            async getSpecific(){
+                try {
+                    this.loading_employee_info = true;
+
+                    let {data, status} = await this.$axios('get', `/api/employee/getOne/${this.selected_id}`);
+                    if([200, 201].includes(status)){
+                        this.employee_data = data;
+                        for(const column in data){
+                            this.$data[column] = data[column];
+                        }
+                    } else {
+                        this.employee_data = null;
+                    }
+
+                    this.loading_employee_info = false;
+                } catch (e) {
+                    console.log(e);
+                }
+
+            },
+
             async submitForm(){
                 let vm = this;
 
@@ -433,13 +471,20 @@ const MARRIED_DEPENDENT_TYPE_OPTION = ['MOTHER', 'FATHER','SPOUSE', 'CHILD'];
                     civil_status: this.civil_status,
                     home_address: this.home_address,
                     contact_number: this.contact_number,
-                    email_address:  this.email,
+                    email_address:  this.email_address,
                     facebook_account:  this.facebook_account,
                     dependents: JSON.stringify(this.dependents)
                 }
+                
+                let endpoint = '/api/employee/store';
+
+                if(this.isUpdate){
+                    endpoint = '/api/employee/storeUpdate';
+                    payload.id = parseInt(this.selected_id);
+                }
 
                 let formdata = this.payloadToFormdata(payload);
-                let res = await this.$axios('post', '/api/employee/store', formdata);
+                let res = await this.$axios('post', endpoint, formdata);
                  
                 if([200, 201].includes(res.status)){
                     this.$swal({
@@ -480,6 +525,10 @@ const MARRIED_DEPENDENT_TYPE_OPTION = ['MOTHER', 'FATHER','SPOUSE', 'CHILD'];
                 }
                 this.is_loading_list = false;
             },
-        }
+        },
+
+        components: {
+            AppLoader: Loader,
+        },
     }
 </script>

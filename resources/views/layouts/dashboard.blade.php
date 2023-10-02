@@ -82,6 +82,15 @@
                             <li><a class="link_name" href="#">Reports</a></li>
                         </ul>
                     </li>
+                    <li>
+                        <a href="{{route('user.index')}}">
+                            <i class='bx bxs-user'></i>
+                            <span class="link_name">Users</span>
+                        </a>
+                        <ul class="sub-menu blank">
+                            <li><a class="link_name" href="#">User</a></li>
+                        </ul>
+                    </li>
                 @endif
                 <li>
                     <a href="#" onclick="logout()">

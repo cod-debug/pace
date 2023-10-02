@@ -26,8 +26,9 @@
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th width="40%">Name</th>
-                                <th width="40%">Office</th>
+                                <th width="30%">Name</th>
+                                <th width="30%">Office</th>
+                                <th width="20%">Employment Status</th>
                                 <th class="text-right"></th>
                             </tr>
                         </thead>
@@ -39,10 +40,13 @@
                                 <td>
                                     {{ item.office.name }}
                                 </td>
+                                <td>
+                                    {{ item.employment_status }}
+                                </td>
                                 <td class="text-right">
                                     <div class="text-right" v-if="item.id !== selected_id">
                                         <a :href="`/employee/record/${item.id}`" :class="`btn btn-sm btn-primary ${auth_data.type === 'admin' ? 'mx-4': ''}`"><i class="fas fa-file-invoice"></i></a> 
-                                        <button class="btn btn-sm btn-success" v-if="auth_data.type === 'admin'"><i class="fa fa-edit"></i></button>
+                                        <a class="btn btn-sm btn-success" v-if="auth_data.type === 'admin'" :href="`/employee/edit/${item.id}`"><i class="fa fa-edit"></i></a>
                                         <button class="btn btn-sm btn-danger mx-1" v-if="auth_data.type === 'admin'"  @click="confirmDelete(item)" ><i class="fa fa-trash"></i></button>
                                     </div>
                                     <div v-if="show_confirm_delete && item.id === selected_id">
@@ -119,11 +123,7 @@
                 
                 let res = await this.$axios('post', `/api/auth/check`, fd);
                 if([200, 201].includes(res.status)){
-                    this.$swal({
-                        title: 'Warning',
-                        text: 'Correct password but feature is under development',
-                        icon: 'warning'
-                    });
+                    this.trash(id);
                 } else {
                     this.$swal({
                         title: 'Error',
@@ -132,7 +132,33 @@
                     });
                 }
             },
-
+            async trash(id){
+                try {
+                    let {data, status} = await this.$axios('get', `/api/employee/trash/${id}`);
+                    
+                    if([200, 201].includes(status)){
+                        this.$swal({
+                            title: 'Success',
+                            text: data.message,
+                            icon: 'success'
+                        });
+                        this.password = "";
+                    } else {
+                        this.$swal({
+                            title: 'Success',
+                            text: data.message,
+                            icon: 'error'
+                        });
+                    }
+                } catch (e) {
+                    console.log(e);
+                    this.$swal({
+                        title: 'Error',
+                        text: 'Something went wrong during submission. Kindly contact the developer.',
+                        icon: 'error'
+                    });
+                }
+            },
             async getList(){
                 try {
                     this.is_loading_list = true;

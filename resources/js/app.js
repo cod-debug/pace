@@ -11,7 +11,11 @@ import EmployeeAdd from './components/Employee/EmployeeAdd.vue';
 import EmployeeRecord from './components/Employee/EmployeeRecord.vue';
 
 import ReportIndex from './components/Report/ReportIndex.vue';
+
 import AgencyFeeIndex from './components/AgencyFee/AgencyFeeIndex.vue';
+
+import UserIndex from './components/Users/UserIndex.vue';
+
 import VueAwesomePaginate from "vue-awesome-paginate";
 
 import Swal from 'sweetalert2';
@@ -26,6 +30,7 @@ const app = createApp({
         AppEmployeeRecord: EmployeeRecord,
         AppReportIndex: ReportIndex,
         AppAgencyFeeIndex: AgencyFeeIndex,
+        AppUserIndex: UserIndex,
     }
 });
 

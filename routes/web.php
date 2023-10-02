@@ -34,6 +34,7 @@ Route::group(['prefix' => 'employee', 'as' => 'employee.', 'middleware' => ['log
     Route::get('/add', 'EmployeeController@add')->name('add');
     Route::get('/record/{id}', 'EmployeeController@record')->name('record');
     Route::get('/list-paginated', 'EmployeeController@listPaginated')->name('list-paginated');
+    Route::get('/edit/{id}', 'EmployeeController@edit')->name('edit');
 });
 
 Route::group(['prefix' => 'report', 'as' => 'report.', 'middleware' => ['logged_in']], function () {
@@ -42,5 +43,9 @@ Route::group(['prefix' => 'report', 'as' => 'report.', 'middleware' => ['logged_
 
 Route::group(['prefix' => 'agency_fee', 'as' => 'agency_fee.', 'middleware' => ['logged_in']], function () {
     Route::get('/', 'AgencyFeeController@index')->name('index');
+});
+
+Route::group(['prefix' => 'user', 'as' => 'user.', 'middleware' => ['logged_in']], function () {
+    Route::get('/', 'UserController@index')->name('index');
 });
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

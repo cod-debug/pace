@@ -11,6 +11,19 @@ use Illuminate\Validation\Rule;
 class EmployeeController extends Controller
 {
     //
+
+    protected $EMPLOYEE_VALIDATION = [
+        'full_name' => 'required|max:150',
+        'office_id' => 'required|numeric',
+        'employment_status' => '',
+        'birth_date' => 'required',
+        'civil_status' => 'required',
+        'home_address' => 'required',
+        'contact_number' => 'required',
+        'email_address' => 'email',
+        'facebook_account' => 'max:255',
+    ];
+
     public function index(){
         return view('employees.list');
     } 
@@ -24,24 +37,14 @@ class EmployeeController extends Controller
     } 
 
     public function singleEmployee($id){
-        $employee = EmployeeModel::with('office')->find($id);
+        $employee = EmployeeModel::with('office')->with('dependents')->find($id);
 
         return json_encode($employee);
     }
 
     public function store(Request $request){
         
-        $validated = $request->validate([
-            'full_name' => 'required|max:150|unique:employees',
-            'office_id' => '',#'required|numeric',
-            'employment_status' => '',
-            'birth_date' => 'required',
-            'civil_status' => 'required',
-            'home_address' => 'required',
-            'contact_number' => 'required',
-            'email_address' => 'email',
-            'facebook_account' => 'max:255',
-        ]);
+        $validated = $request->validate([...$this->EMPLOYEE_VALIDATION, 'full_name' => 'required|max:150|unique:employees']);
 
         $created = EmployeeModel::firstOrcreate($validated);
         
@@ -105,5 +108,70 @@ class EmployeeController extends Controller
         $employees_record = EmployeeRecordModel::where('employee_id', $id)->orderBy('payment_date', 'DESC')->paginate(10);
 
         return json_encode($employees_record);
+    }
+
+    public function edit($id){
+        return view('employees.add', compact('id'));
+    }
+    
+
+    public function storeUpdate(Request $request){
+        
+        $validated = $request->validate($this->EMPLOYEE_VALIDATION);
+        $employee = EmployeeModel::where('id', (int) $request->id);
+
+        if(!$employee){
+            $res = [
+                'status' => 400,
+                'message' => 'No Such employee found'
+            ];
+
+            return response(json_encode($res), 400);
+        }
+        $created = $employee->update($validated);
+
+        // remove current dependents
+        DependentModel::where('employee_id', $request->id)->delete();
+
+        $dependents = json_decode($request->dependents);
+
+        foreach($dependents as $dependent){
+            DependentModel::firstOrcreate([
+                'employee_id' => $request->id,
+                'name' => $dependent->name,
+                'birth_date' => $dependent->birth_date,
+                'relationship' => $dependent->relationship,
+                'status' => 'active',
+            ]);
+        }
+
+        $res = [
+            'status' => 200,
+            'message' => 'Successfully saved employee record.'
+        ];
+
+        return response(json_encode($res), 200);
+    }
+
+    public function trashEmployee(Request $request){
+        $employee = EmployeeModel::where('id', (int) $request->id);
+
+        if(!$employee){
+            $res = [
+                'status' => 400,
+                'message' => 'No Such employee found'
+            ];
+
+            return response(json_encode($res), 400);
+        }
+
+        $created = $employee->update(['status' => 'deleted']);
+
+        $res = [
+            'status' => 200,
+            'message' => 'Successfully deleted employee record.'
+        ];
+
+        return response(json_encode($res), 200);
     }
 }
