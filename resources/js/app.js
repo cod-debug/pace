@@ -15,6 +15,7 @@ import ReportIndex from './components/Report/ReportIndex.vue';
 import AgencyFeeIndex from './components/AgencyFee/AgencyFeeIndex.vue';
 
 import UserIndex from './components/Users/UserIndex.vue';
+import UserAdd from './components/Users/UserAdd.vue';
 
 import VueAwesomePaginate from "vue-awesome-paginate";
 
@@ -31,6 +32,7 @@ const app = createApp({
         AppReportIndex: ReportIndex,
         AppAgencyFeeIndex: AgencyFeeIndex,
         AppUserIndex: UserIndex,
+        AppUserAdd: UserAdd,
     }
 });
 

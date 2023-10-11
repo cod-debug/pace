@@ -47,5 +47,6 @@ Route::group(['prefix' => 'agency_fee', 'as' => 'agency_fee.', 'middleware' => [
 
 Route::group(['prefix' => 'user', 'as' => 'user.', 'middleware' => ['logged_in']], function () {
     Route::get('/', 'UserController@index')->name('index');
+    Route::get('/add', 'UserController@create')->name('create');
 });
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

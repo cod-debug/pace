@@ -17,7 +17,11 @@ class UserController extends Controller
     ];
 
     public function index(){
-        return view('users.index');
+        return view('users.list');
+    }
+
+    public function create(){
+        return view('users.add');
     }
 
     public function store(Request $request){

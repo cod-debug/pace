@@ -21,7 +21,7 @@
                                 <div class="col-md-12 p-2">
                                     <div class="form-group">
                                         <label><b class="text-danger">*</b> NAME: </label>
-                                        <input type="text" class="form-control" v-model="full_name">
+                                        <input type="text" class="form-control" v-model="full_name" required>
                                     </div>
                                 </div>
                                 <div class="col-md-6 p-2">
@@ -271,7 +271,7 @@
                     </div>
                     <div class="d-flex" :class="step == 1 ? 'justify-content-end' : 'justify-content-between'">
                         <button class="btn btn-outline-secondary" type="button" v-if="step > 1" @click="step--"><i class="fa fa-caret-left"></i> Back</button>
-                        <button class="btn btn-outline-primary" type="button" v-if="step < last_step" @click="step++">{{next_btn_text}} <i class="fa fa-caret-right"></i></button>
+                        <button class="btn btn-outline-primary" type="button" v-if="step < last_step" @click="next()">{{next_btn_text}} <i class="fa fa-caret-right"></i></button>
                         <button class="btn btn-primary" v-if="step == last_step">Submit <i class="fa fa-caret-right"></i></button>
                     </div>
                 </form>
@@ -428,6 +428,31 @@ import Loader from '../Reusables/Loader.vue';
         },
 
         methods: {
+
+            validateStep(){
+                if(this.step === 1){
+                    if (!this.full_name || !this.office_id || !this.employment_status || !this.birth_date || !this.civil_status || !this.home_address || !this.contact_number) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+            },
+
+             next(){
+                let valid =  this.validateStep();
+                console.log(valid);
+                if(!valid){
+                    this.$swal({
+                        title: 'Error',
+                        text: 'Please check all fields.',
+                        icon: 'error'
+                    });
+                    return false;
+                }
+
+                this.step++;
+            },
             addDependent(){
                 this.dependents.push({
                     name: '',
