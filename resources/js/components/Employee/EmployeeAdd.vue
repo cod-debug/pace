@@ -226,7 +226,7 @@
                                                 <small class="text-muted w-100 d-block">
                                                     Email Address
                                                 </small>
-                                                <strong class="d-block mx-2">{{ email }}</strong>
+                                                <strong class="d-block mx-2">{{ email_address }}</strong>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
@@ -436,12 +436,13 @@ import Loader from '../Reusables/Loader.vue';
                     } else {
                         return true;
                     }
+                } else {
+                    return true;
                 }
             },
 
              next(){
                 let valid =  this.validateStep();
-                console.log(valid);
                 if(!valid){
                     this.$swal({
                         title: 'Error',

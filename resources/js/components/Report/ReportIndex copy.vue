@@ -58,7 +58,74 @@
                     </div>
                     <div class="table-responsive" style="max-height: 400px!important; overflow: auto;"  v-if="['all', 'employee'].includes(report_type) && !is_generating">
                         <h4>Employee Record</h4>
-                        <app-employee-record-table ref="employee_record_table" :is_pdf="false" />
+                        <table class="table table-striped">
+                            <thead style="position: sticky; top: 0; background-color: white;">
+                                <tr>
+                                    <th>Payment Date</th>
+                                    <th>Name</th>
+                                    <th>Contact Number</th>
+                                    <th>Office</th>
+                                    <th>Particulars</th>
+                                    <th>Notes</th>
+                                    <th class="text-right">Union Dues</th>
+                                    <th class="text-right">I.P. Funds</th>
+                                    <th class="text-right">FA</th>
+                                    <th class="text-right">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="(record, record_key) in report_data" :key="record_key">
+                                    <td>
+                                        {{ record.payment_date }}
+                                    </td>
+                                    <td>
+                                        {{ record.employee.full_name }}
+                                    </td>
+                                    <td>
+                                        {{ record.employee.contact_number }}
+                                    </td>
+                                    <td>
+                                        {{ record.employee.office.name }}
+                                    </td>
+                                    <td>
+                                        {{ record.particulars }}
+                                    </td>
+                                    <td>
+                                        {{ record.notes || '--' }}
+                                    </td>
+                                    <td class="text-right bg-info fw-bold text-white">
+                                        {{ record.union_dues }}
+                                    </td>
+                                    <td class="text-right bg-info fw-bold text-white">
+                                        {{ record.ip_funds }}
+                                    </td>
+                                    <td class="text-right bg-info fw-bold text-white">
+                                        {{ record.fa }}
+                                    </td>
+                                    <td class="text-right bg-info fw-bold text-white">
+                                        {{ getRowtotal(record) }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot style="position: sticky; bottom: 0; background-color: white;">
+                                <tr>
+                                    <td colspan="6"></td>
+                                    <td class="text-right fw-bold text-success" style="font-size: 16pt;">
+                                        {{ getTotalUnionDues(report_data) }}
+                                    </td>
+                                    <td class="text-right fw-bold text-success" style="font-size: 16pt;">
+                                        {{ getTotalIPFunds(report_data) }}
+                                    </td>
+                                    <td class="text-right fw-bold text-success" style="font-size: 16pt;">
+                                        {{ getTotalFA(report_data) }}
+                                    </td>
+                                    <td class="text-right fw-bold text-success" style="font-size: 16pt;">
+                                        {{ getTotal }}
+                                    </td>
+                                </tr>
+                            </tfoot>
+
+                        </table>
                     </div>
                     <div class="table-responsive" style="max-height: 400px!important; overflow: auto;"  v-if="['all', 'agency'].includes(report_type) && !is_generating">
                         <h4>Agency Fee</h4>
@@ -122,15 +189,11 @@
                 </div>
             </div>
         </div>
-        <div class="d-none">
-            <app-employee-record-table ref="employee_record_table_pdf" :is_pdf="true" />
-        </div>
     </div>
 </template>
 
 <script>
     import Loader from '../Reusables/Loader.vue';
-    import EmployeeRecordTable from './EmployeeRecordTable.vue';
     export default {
         data: () => ({
             office: "",
@@ -148,20 +211,15 @@
         }),
         components: {
             AppLoader: Loader,
-            AppEmployeeRecordTable: EmployeeRecordTable,
         },
         computed: {
             getTotal(){
                 let total = 0;
 
-                this.report_by_office.map((office) => {
-                    office.employees.map((employee) => {
-                        employee.records.map((rec) => {
-                            total+=rec.union_dues;
-                            total+=rec.ip_funds;
-                            total+=rec.fa;
-                        })
-                    })
+                this.report_data.map((rec) => {
+                    total+=rec.union_dues;
+                    total+=rec.ip_funds;
+                    total+=rec.fa;
                 });
 
                 return total.toLocaleString();
@@ -181,42 +239,6 @@
         methods: {
             initApp(){
                 this.getOffices();
-            },
-            getTotalUnionDuesRecord(offices){
-                let total = 0;
-                offices.map((office) => {
-                    office.employees.map((employee) => {
-                        employee.records.map((record) => {
-                            total+=record.union_dues
-                        });
-                    });
-                });
-
-                return total;
-            },
-            getTotalIPRecord(offices){
-                let total = 0;
-                offices.map((office) => {
-                    office.employees.map((employee) => {
-                        employee.records.map((record) => {
-                            total+=record.ip_funds
-                        });
-                    });
-                });
-
-                return total;
-            },
-            getTotalFARecord(offices){
-                let total = 0;
-                offices.map((office) => {
-                    office.employees.map((employee) => {
-                        employee.records.map((record) => {
-                            total+=record.fa
-                        });
-                    });
-                });
-
-                return total;
             },
             getTotalUnionDues(rec){
                 let total = 0;
@@ -245,53 +267,9 @@
 
                 return total.toLocaleString();
             },
-
-            getTotalUnionDuesByOffice(emps){
-                let ud = 0;
-                emps.map((employee) => {
-                    employee.records.map((record) => {
-                        ud+=record.union_dues
-                    })
-                })
-
-                return ud;
-            },
-
-            getTotalIPFundsByOffice(emps){
-                let ip = 0;
-                emps.map((employee) => {
-                    employee.records.map((record) => {
-                        ip+=record.ip_funds
-                    })
-                })
-
-                return ip;
-            },
-
-            getTotalFAByOffice(emps){
-                let fa = 0;
-                emps.map((employee) => {
-                    employee.records.map((record) => {
-                        fa+=record.fa
-                    })
-                })
-
-                return fa;
-            },
-
             getRowtotal(record){
                return record.union_dues+record.ip_funds+record.fa;
             },
-
-            getRowtotalByOffice(records){
-                let total = 0;
-                records.map((record) => {
-                    total+=record.union_dues+record.ip_funds+record.fa;
-                })
-                return total;
-            },
-
-
             async submitForm(){
                 this.is_report_submitted = true;
                 this.is_generating = true;
@@ -307,8 +285,9 @@
                 let res = await this.$axios('post', `/api/report/generate`, fd);
                 
                 if([200, 201].includes(res.status)){
+                    console.log(res.data.offices, 'offices list of records');
                     this.report_by_office = res.data.offices;
-                    // this.report_data = res.data.employee_record;
+                    this.report_data = res.data.employee_record;
                     this.agency_fee_data = res.data.agency_fee;
                 } else {
                     this.$swal({

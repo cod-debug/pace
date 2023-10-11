@@ -33,4 +33,9 @@ class EmployeeModel extends Model
     {
         return $this->hasMany(DependentModel::class, 'employee_id');
     }
+    
+    public function records()
+    {
+        return $this->hasMany(EmployeeRecordModel::class, 'employee_id');
+    }
 }

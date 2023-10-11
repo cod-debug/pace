@@ -7,6 +7,7 @@ use Illuminate\Support\Carbon;
 
 use App\Models\EmployeeRecordModel;
 use App\Models\AgencyFeeModel;
+use App\Models\OfficeModel;
 
 class ReportController extends Controller
 {
@@ -24,23 +25,33 @@ class ReportController extends Controller
         ]);
 
         $office = $request->office;
-        $date_from = $request->date_from;
+        $date_from = Carbon::create($request->date_from);
         $date_to = Carbon::create($request->date_to);
 
 
-        $employee_record = EmployeeRecordModel::whereBetween('payment_date', [$date_from, $date_to])
-        ->whereHas('employee', function ($query) use($office) {
-            if($office){
+        // $employee_record = EmployeeRecordModel::whereBetween('payment_date', [$date_from, $date_to])
+        // ->whereHas('employee', function ($query) use($office) {
+        //     if($office){
+        //         $query->where('office_id', $office);
+        //     }
+        // })
+        // ->orderBy('payment_date', 'DESC')
+        // ->with('employee')->get();
+
+        $offices = OfficeModel::whereHas('employees', function ($query) use ($office) {
+            if ($office) {
                 $query->where('office_id', $office);
             }
-        })
-        ->orderBy('payment_date', 'DESC')
-        ->with('employee')->get();
+        })->with('employees')->with(['employees.records' => function ($query) use ($date_from, $date_to) {
+            if ($date_from && $date_to) {
+                $query->whereBetween('payment_date', [$date_from, $date_to]);
+            }
+        }])->get();
 
         $agency_fee = AgencyFeeModel::whereBetween('payment_date', [$date_from, $date_to])->orderBy('payment_date', 'DESC')->get();
         
         $res = [
-            "employee_record" => $employee_record,
+            "offices" => $offices,
             "agency_fee" => $agency_fee
         ];
         
