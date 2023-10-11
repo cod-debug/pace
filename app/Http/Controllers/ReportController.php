@@ -44,7 +44,7 @@ class ReportController extends Controller
             }
         })->with('employees')->with(['employees.records' => function ($query) use ($date_from, $date_to) {
             if ($date_from && $date_to) {
-                $query->whereBetween('payment_date', [$date_from, $date_to]);
+                $query->whereBetween('payment_date', [$date_from, $date_to])->orderBy('payment_date', 'DESC');
             }
         }])->get();
 

@@ -37,8 +37,10 @@
                                     <td class="text-right text-white" width="15%">{{ parentData.getTotalFA(employee.records) }}</td>
                                     <td class="text-right text-white" width="15%">{{ parentData.getRowtotalByOffice(employee.records) }}</td>
                                 </tr>
-                                <tr v-for="(record, reecord_key) in employee.records" :key="reecord_key" style="background: #D6E5D6 ;" v-if="employee.show_particulars || is_pdf">
-                                    <td class="" width="30%">&nbsp; &nbsp; &nbsp; &nbsp; {{ record.particulars }}</td>
+                                <tr v-for="(record, record_key) in employee.records" :key="record_key" style="background: #D6E5D6 ;" v-if="employee.show_particulars || is_pdf">
+                                    <td class="" width="30%">&nbsp; &nbsp; &nbsp; &nbsp; {{ record.particulars }}
+                                        <br />
+                                        &nbsp; &nbsp; &nbsp; &nbsp; <small class="text-muted">{{ record.payment_date }}</small></td>
                                     <td class="text-right text-dark" width="15%">{{ record.union_dues }}</td>
                                     <td class="text-right text-dark" width="15%">{{ record.ip_funds }}</td>
                                     <td class="text-right text-dark" width="15%">{{ record.fa }}</td>
