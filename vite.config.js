@@ -7,7 +7,12 @@ export default defineConfig({
         laravel({
             input: [
                 'resources/sass/app.scss',
+                'resources/css/app.css',
+                'resources/css/font-awesome.min.css',
+                'resources/css/sidebar.min.css',
+                
                 'resources/js/app.js',
+                'resources/js/font-awesome.min.js',
             ],
             refresh: true,
         }),
