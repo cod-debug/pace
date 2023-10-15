@@ -21,4 +21,9 @@ class OfficeModel extends Model
     {
         return $this->hasMany(EmployeeModel::class, 'office_id');
     }
+
+    public function agency_fees()
+    {
+        return $this->hasMany(AgencyFeeModel::class, 'office_id');
+    }
 }

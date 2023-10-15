@@ -1,7 +1,7 @@
 <template>
     <div>
         <table class="table table-striped">
-            <thead style="position: sticky; top: 0; background-color: white;">
+            <thead :style="!is_pdf ? 'position: sticky; top: 0; background-color: white;' : ''">
                 <tr>
                     <th width="30%">Office</th>
                     <th class="text-right" colspan="1" width="15%">Union Dues</th>
@@ -12,7 +12,7 @@
             </thead>
             <tbody  v-for="(office, office_key) in parentData.report_by_office" :key="office_key">
                 <tr @click="office.show_employees = !office.show_employees ? true : false" style="cursor: pointer;">
-                    <td colspan="1">{{ office.name }}</td>
+                    <td colspan="1" class="bg-success text-white">{{ office.name }}</td>
                     <td class="text-right bg-success fw-bold text-white">
                         {{ parentData.getTotalUnionDuesByOffice(office.employees).toLocaleString() }}
                     </td>
@@ -37,7 +37,7 @@
                                     <td class="text-right text-white" width="15%">{{ parentData.getTotalFA(employee.records) }}</td>
                                     <td class="text-right text-white" width="15%">{{ parentData.getRowtotalByOffice(employee.records) }}</td>
                                 </tr>
-                                <tr v-for="(record, record_key) in employee.records" :key="record_key" style="background: #D6E5D6 ;" v-if="employee.show_particulars || is_pdf">
+                                <tr v-for="(record, record_key) in employee.records" :key="record_key" style="background: #D6E5D6 ;" v-if="employee.show_particulars && !is_pdf">
                                     <td class="" width="30%">&nbsp; &nbsp; &nbsp; &nbsp; {{ record.particulars }}
                                         <br />
                                         &nbsp; &nbsp; &nbsp; &nbsp; <small class="text-muted">{{ record.payment_date }}</small></td>
@@ -51,7 +51,7 @@
                     </td>
                 </tr>
             </tbody>
-            <tfoot style="position: sticky; bottom: 0; background-color: white;">
+            <tfoot :style="!is_pdf ? 'position: sticky; bottom: 0; background-color: white;' : ''">
                 <tr>
                     <td></td>
                     <td class="text-right fw-bold text-success" style="font-size: 16pt;">
@@ -64,7 +64,7 @@
                         {{ parentData.getTotalFARecord(parentData.report_by_office) }}
                     </td>
                     <td class="text-right fw-bold text-success" style="font-size: 16pt;">
-                        {{ parentData.getTotal }}
+                        {{ parentData.getTotal() }}
                     </td>
                 </tr>
             </tfoot>

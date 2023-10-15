@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('agency_fee', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('office_id')->references('id')->on('office');
             $table->string('full_name');
             $table->date('payment_date');
             $table->float('union_dues');

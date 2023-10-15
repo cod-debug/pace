@@ -42,17 +42,24 @@ class ReportController extends Controller
             if ($office) {
                 $query->where('office_id', $office);
             }
-        })->with('employees')->with(['employees.records' => function ($query) use ($date_from, $date_to) {
+        })
+        ->with('employees')
+        ->with(['employees.records' => function ($query) use ($date_from, $date_to) {
             if ($date_from && $date_to) {
                 $query->whereBetween('payment_date', [$date_from, $date_to])->orderBy('payment_date', 'DESC');
             }
-        }])->get();
+        }])
+        ->with(['agency_fees' => function ($query) use ($date_from, $date_to) {
+            if ($date_from && $date_to) {
+                $query->whereBetween('payment_date', [$date_from, $date_to])->orderBy('payment_date', 'DESC');
+            }
+        }])
+        ->get();
 
-        $agency_fee = AgencyFeeModel::whereBetween('payment_date', [$date_from, $date_to])->orderBy('payment_date', 'DESC')->get();
+        // $agency_fee = AgencyFeeModel::whereBetween('payment_date', [$date_from, $date_to])->orderBy('payment_date', 'DESC')->get();
         
         $res = [
             "offices" => $offices,
-            "agency_fee" => $agency_fee
         ];
         
         return json_encode($res);

@@ -15,6 +15,7 @@ class AgencyFeeController extends Controller
 
     public function storeAgencyFee(Request $request){
         $validated = $request->validate([
+            'office_id' => 'required',
             'full_name' => 'required|max:255',
             'payment_date' => ['required'],
             'union_dues' => 'required|numeric',

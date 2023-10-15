@@ -17,6 +17,14 @@
                             <input type="text" class="form-control" v-model="full_name" required />
                         </div>
                         <div class="form-group col-md-6 my-2">
+                            <label><b class="text-danger">*</b> DEPARTMENT: </label>
+                            <select name="department" required id="department" v-model="office_id" class="form-select">
+                                <option v-for="(item, key) in office_list" :key="key" :value="item.id">
+                                    {{ item.name }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-6 my-2">
                             <label>Union Dues </label>
                             <input type="number" class="form-control" v-model="union_dues" required />
                         </div>
@@ -52,16 +60,19 @@
     export default {
         data: () => ({
             payment_date: null,
+            office_id: "",
             full_name: '',
             union_dues: 900,
             ip_fund: 300,
             fa: 1080,
             notes: '',
+            office_list: [],
         }),
 
         methods: {
             resetfForm(){
                 this.payment_date = this.current_date;
+                this.office_id = '';
                 this.full_name = '';
                 this.union_dues = 900;
                 this.ip_fund = 300;
@@ -69,8 +80,33 @@
                 this.notes = '';
             },
 
+            async getOffices(){
+                try {
+                    this.is_loading_list = true;
+                    let {data, status} = await this.$axios('get','/office/list-all-api');
+                    
+                    if([200, 201].includes(status)){
+                        this.office_list = data;
+                    } else {
+                        this.$swal({
+                            title: 'Success',
+                            text: data.message,
+                            icon: 'error'
+                        });
+                    }
+                } catch (e) {
+                    this.$swal({
+                        title: 'Success',
+                        text: 'Something went wrong during data fetching.',
+                        icon: 'error'
+                    });
+                }
+                this.is_loading_list = false;
+            },
+
             async submitForm(){
                 let payload = {
+                    office_id: parseInt(this.office_id),
                     full_name: this.full_name,
                     payment_date: this.payment_date,
                     union_dues: this.union_dues,
@@ -102,6 +138,7 @@
 
         mounted(){
             this.payment_date = this.current_date;
+            this.getOffices();
         },
         computed:{
             total(){

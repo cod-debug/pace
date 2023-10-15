@@ -4,7 +4,11 @@
             <div class="bg-white shadow-lg p-3">
                 <div class="d-flex justify-content-between align-items-center">
                     <h4><i class="fa fa-file"></i> Add Employee Record</h4>
-                    <a href="/employee" class="btn btn-secondary"><i class="fa fa-users"></i> Back to Employee List</a>
+                    <div>
+                        <button class="btn btn-success mx-2" @click="downloadEmployeeRecordPdf"><i class="fa fa-download"></i> Save as PDF</button>
+                        <a href="/employee" class="btn btn-secondary"><i class="fa fa-users"></i> Back to Employee List</a>
+                    </div>
+
                 </div>
                 <div class="border border-muted my-2"></div>
                 <div v-if="employee_data" class="my-4 mx-2">
@@ -83,17 +87,27 @@
                 </div>
             </div>
         </div>
+        <div v-if="!loading_employee_info && !loading_employee_record" style="height: 0px!important; overflow: hidden;" >
+            <div ref="employee_record_pdf">
+                <app-employee-record-pdf :employee_data.sync="employee_data"
+                    :getTotal.sync="getTotal"
+                    :employee_record.sync="employee_record" />
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
     import Loader from '../Reusables/Loader.vue';
+    import EmployeeRecordPdf from './pdf/EmployeeRecordPdf.vue';
+    import html2pdf from 'html2pdf.js';
     export default {
         props:[
             'selected_id'
         ],
         components: {
             AppLoader: Loader,
+            AppEmployeeRecordPdf: EmployeeRecordPdf,
         },
         data: () => ({
             name: "RECORD",
@@ -108,8 +122,8 @@
             notes: '',
             total: null,
 
-            loading_employee_info: false,
-            loading_employee_record: false,
+            loading_employee_info: true,
+            loading_employee_record: true,
         }),
         mounted(){
             this.initApp();
@@ -136,6 +150,12 @@
             },
         },
         methods: {
+            downloadEmployeeRecordPdf(){
+                html2pdf(this.$refs.employee_record_pdf, {
+                    margin: 10,
+                    filename: `EMPLOYEE-RECORD_${this.employee_data.full_name.toUpperCase()}--${new Date()}.pdf`,
+                });
+            },
             initApp(){        
                 this.getEmployeeDetails();
                 this.getRecords();

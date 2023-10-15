@@ -20,6 +20,7 @@ import UserAdd from './components/Users/UserAdd.vue';
 import VueAwesomePaginate from "vue-awesome-paginate";
 
 import Swal from 'sweetalert2';
+import momentPlugin from './plugins/moment.js'
 
 const app = createApp({
     components: {
@@ -37,6 +38,7 @@ const app = createApp({
 });
 
 app.use(VueAwesomePaginate);
+app.use(momentPlugin);
 
 app.mixin({
     methods:{

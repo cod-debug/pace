@@ -18,7 +18,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-3" v-if="['all', 'employee'].includes(report_type)">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label>Office</label>
                                 <select class="form-select" v-model="office">
@@ -52,85 +52,60 @@
                 <div class="text-right">
                     <a style="cursor: pointer;" v-if="!is_generating" @click="is_report_submitted = false">[x]</a>
                 </div>
+                <div class="mt-4" v-if="!is_generating">
+                    <button class="btn btn-success btn-sm" @click="downloadEmployeeRecordPdf"><i class="fa fa-download"></i> Save Employee Record as PDF</button>
+                    <button class="btn btn-success btn-sm mx-2" @click="downloadAgencyFeePdf"><i class="fa fa-download"></i> Save Agency Fee Report PDF</button>
+                </div>
                 <div class="mt-4">
                     <div v-if="is_generating" class="text-center">
                         <app-loader />
                     </div>
-                    <div class="table-responsive" style="max-height: 400px!important; overflow: auto;"  v-if="['all', 'employee'].includes(report_type) && !is_generating">
-                        <h4>Employee Record</h4>
-                        <app-employee-record-table ref="employee_record_table" :is_pdf="false" />
+                    <div class="table-responsive">
+                        <div class="card" style="max-height: 400px!important; overflow: auto;"  v-if="['all', 'employee'].includes(report_type) && !is_generating">
+                            <div class="card-header">
+                                <h4>Employee Record</h4>
+                            </div>
+                            <div class="card-body">
+                                <app-employee-record-table ref="employee_record_table" :is_pdf="false" />
+                            </div>
+                        </div>
                     </div>
-                    <div class="table-responsive" style="max-height: 400px!important; overflow: auto;"  v-if="['all', 'agency'].includes(report_type) && !is_generating">
-                        <h4>Agency Fee</h4>
-                        <table class="table table-striped">
-                            <thead style="position: sticky; top: 0; background-color: white;">
-                                <tr>
-                                    <th>Payment Date</th>
-                                    <th>Name</th>
-                                    <th>Notes</th>
-                                    <th class="text-right">Union Dues</th>
-                                    <th class="text-right">I.P. Funds</th>
-                                    <th class="text-right">FA</th>
-                                    <th class="text-right">Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="(record, record_key) in agency_fee_data" :key="record_key">
-                                    <td>
-                                        {{ record.payment_date }}
-                                    </td>
-                                    <td>
-                                        {{ record.full_name }}
-                                    </td>
-                                    <td>
-                                        {{ record.notes || '--' }}
-                                    </td>
-                                    <td class="text-right bg-info fw-bold text-white">
-                                        {{ record.union_dues }}
-                                    </td>
-                                    <td class="text-right bg-info fw-bold text-white">
-                                        {{ record.ip_funds }}
-                                    </td>
-                                    <td class="text-right bg-info fw-bold text-white">
-                                        {{ record.fa }}
-                                    </td>
-                                    <td class="text-right bg-info fw-bold text-white">
-                                        {{ getRowtotal(record) }}
-                                    </td>
-                                </tr>
-                            </tbody>
-                            <tfoot style="position: sticky; bottom: 0; background-color: white;">
-                                <tr>
-                                    <td colspan="3"></td>
-                                    <td class="text-right fw-bold text-success" style="font-size: 16pt;">
-                                        {{ getTotalUnionDues(agency_fee_data) }}
-                                    </td>
-                                    <td class="text-right fw-bold text-success" style="font-size: 16pt;">
-                                        {{ getTotalIPFunds(agency_fee_data) }}
-                                    </td>
-                                    <td class="text-right fw-bold text-success" style="font-size: 16pt;">
-                                        {{ getTotalFA(agency_fee_data) }}
-                                    </td>
-                                    <td class="text-right fw-bold text-success" style="font-size: 16pt;">
-                                        {{ getAgencyTotal }}
-                                    </td>
-                                </tr>
-                            </tfoot>
-
-                        </table>
+                    <div class="table-responsive mt-4">
+                        <div class="card" style="max-height: 400px!important; overflow: auto;"  v-if="['all', 'agency'].includes(report_type) && !is_generating">
+                            <div class="card-header">
+                                <h4>Agency Fee</h4>
+                            </div>
+                            <div class="card-body">
+                                <app-agency-fee-table ref="agency_fee_table" :is_pdf="false"  />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="d-none">
-            <app-employee-record-table ref="employee_record_table_pdf" :is_pdf="true" />
+        <div style="height: 0px!important; overflow: hidden;" >
+            <div ref="employee_record_table_pdf">
+                <div class="text-center">
+                    <h1>Progressive Alliance of Capitol Employees</h1>
+                    <h2>(P A C E)</h2>
+                    <div class="text-center">
+                        <p>{{ as_of }}</p>
+                    </div>
+                </div>
+                <app-employee-record-table :is_pdf="true" />
+            </div>
+            <div ref="agency_fee_table_pdf">
+                <app-agency-fee-table :is_pdf="true" />
+            </div>
         </div>
     </div>
 </template>
 
 <script>
+    import html2pdf from 'html2pdf.js';
     import Loader from '../Reusables/Loader.vue';
     import EmployeeRecordTable from './EmployeeRecordTable.vue';
+    import AgencyFeeTable from './AgencyFeeTable.vue';
     export default {
         data: () => ({
             office: "",
@@ -144,28 +119,15 @@
             report_by_office: [],
             report_data: [],
             agency_fee_data: [],
+            agency_fee_data_by_office: [],
             office_list: [],
         }),
         components: {
             AppLoader: Loader,
             AppEmployeeRecordTable: EmployeeRecordTable,
+            AppAgencyFeeTable: AgencyFeeTable,
         },
         computed: {
-            getTotal(){
-                let total = 0;
-
-                this.report_by_office.map((office) => {
-                    office.employees.map((employee) => {
-                        employee.records.map((rec) => {
-                            total+=rec.union_dues;
-                            total+=rec.ip_funds;
-                            total+=rec.fa;
-                        })
-                    })
-                });
-
-                return total.toLocaleString();
-            },
             getAgencyTotal(){
                 let total = 0;
 
@@ -177,50 +139,119 @@
 
                 return total.toLocaleString();
             },
+
+            as_of(){
+                let dateFrom = this.date_from;
+                let dateTo = this.date_to;
+                if(dateFrom == dateTo){
+                    return this.$moment(dateFrom).format('MMMM DD, YYYY') 
+                } else {
+                    return this.$moment(dateFrom).format('MMMM DD, YYYY')+' to '+this.$moment(dateTo).format('MMMM DD, YYYY');   
+                }
+            },
         },
         methods: {
+            downloadEmployeeRecordPdf(){
+                html2pdf(this.$refs.employee_record_table_pdf, {
+                    margin: 10,
+                    filename: `EMPLOYEE-RECORD-REPORT-${this.as_of.replaceAll(' ', '_')}.pdf`,
+                });
+            },
+            downloadAgencyFeePdf(){
+                html2pdf(this.$refs.agency_fee_table_pdf, {
+                    margin: 10,
+                    filename: `AGENCY-FEE-REPORT-${this.as_of.replaceAll(' ', '_')}.pdf`,
+                });
+            },
             initApp(){
                 this.getOffices();
             },
-            getTotalUnionDuesRecord(offices){
+            getTotal(is_agency_fee = false){
                 let total = 0;
-                offices.map((office) => {
-                    office.employees.map((employee) => {
-                        employee.records.map((record) => {
+                if(is_agency_fee){
+                    this.agency_fee_data_by_office.map((office) => {
+                        office.agency_fees.map((rec) => {
+                            total+=rec.union_dues;
+                            total+=rec.ip_funds;
+                            total+=rec.fa;
+                        });
+                    })
+                } else {
+                    this.report_by_office.map((office) => {
+                        office.employees.map((employee) => {
+                            employee.records.map((rec) => {
+                                total+=rec.union_dues;
+                                total+=rec.ip_funds;
+                                total+=rec.fa;
+                            })
+                        })
+                    });
+                }
+
+                return total.toLocaleString();
+            },
+            getTotalUnionDuesRecord(offices, is_agency_fee = false){
+                let total = 0;
+                if(is_agency_fee){
+                    offices.map((office) => {
+                        office.agency_fees.map((record) => {
                             total+=record.union_dues
                         });
+                    })
+                } else {
+                    offices.map((office) => {
+                        office.employees.map((employee) => {
+                            employee.records.map((record) => {
+                                total+=record.union_dues
+                            });
+                        });
                     });
-                });
+                }
 
                 return total;
             },
-            getTotalIPRecord(offices){
+            getTotalIPRecord(offices, is_agency_fee = false){
                 let total = 0;
                 offices.map((office) => {
-                    office.employees.map((employee) => {
-                        employee.records.map((record) => {
+                    if(is_agency_fee) {
+                        office.agency_fees.map((record) => {
                             total+=record.ip_funds
                         });
-                    });
+                    } else {
+                        office.employees.map((employee) => {
+                            employee.records.map((record) => {
+                                total+=record.ip_funds
+                            });
+                        });
+                    }
                 });
 
                 return total;
             },
-            getTotalFARecord(offices){
+            getTotalFARecord(offices, is_agency_fee = false){
                 let total = 0;
                 offices.map((office) => {
-                    office.employees.map((employee) => {
-                        employee.records.map((record) => {
+                    if(is_agency_fee) {
+                        office.agency_fees.map((record) => {
                             total+=record.fa
                         });
-                    });
+                    }
+                    else{
+                        office.employees.map((employee) => {
+                            employee.records.map((record) => {
+                                total+=record.fa
+                            });
+                        });
+                    }
                 });
 
                 return total;
             },
             getTotalUnionDues(rec){
                 let total = 0;
-
+                if(rec.length === 0){
+                    return total;
+                }
                 rec.map((r) => {
                     total+=r.union_dues
                 });
@@ -249,9 +280,13 @@
             getTotalUnionDuesByOffice(emps){
                 let ud = 0;
                 emps.map((employee) => {
-                    employee.records.map((record) => {
-                        ud+=record.union_dues
-                    })
+                    if(employee.records){
+                        employee.records.map((record) => {
+                            ud+=record.union_dues
+                        })
+                    } else {
+                        ud+=employee.union_dues
+                    }
                 })
 
                 return ud;
@@ -260,9 +295,13 @@
             getTotalIPFundsByOffice(emps){
                 let ip = 0;
                 emps.map((employee) => {
-                    employee.records.map((record) => {
-                        ip+=record.ip_funds
-                    })
+                    if(employee.records){
+                        employee.records.map((record) => {
+                            ip+=record.ip_funds
+                        })
+                    } else {
+                        ip+=employee.ip_funds
+                    }
                 })
 
                 return ip;
@@ -271,9 +310,13 @@
             getTotalFAByOffice(emps){
                 let fa = 0;
                 emps.map((employee) => {
-                    employee.records.map((record) => {
-                        fa+=record.fa
-                    })
+                    if(employee.records){
+                        employee.records.map((record) => {
+                            fa+=record.fa
+                        })
+                    } else {
+                        fa+=employee.fa
+                    }
                 })
 
                 return fa;
@@ -309,7 +352,8 @@
                 if([200, 201].includes(res.status)){
                     this.report_by_office = res.data.offices;
                     // this.report_data = res.data.employee_record;
-                    this.agency_fee_data = res.data.agency_fee;
+                    // this.agency_fee_data = res.data.agency_fee;
+                    this.agency_fee_data_by_office = res.data.offices;
                 } else {
                     this.$swal({
                         title: 'Error',

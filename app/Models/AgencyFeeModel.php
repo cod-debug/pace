@@ -11,6 +11,7 @@ class AgencyFeeModel extends Model
     protected $table = "agency_fee";
 
     protected $fillable = [
+        "office_id",
         "full_name",
         "payment_date",
         "particulars",
@@ -20,4 +21,9 @@ class AgencyFeeModel extends Model
         "notes",
         "status"
     ];
+    
+    public function office()
+    {
+        return $this->belongsTo(OfficeModel::class, 'office_id');
+    }
 }
