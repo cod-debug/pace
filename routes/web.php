@@ -49,4 +49,8 @@ Route::group(['prefix' => 'user', 'as' => 'user.', 'middleware' => ['logged_in']
     Route::get('/', 'UserController@index')->name('index');
     Route::get('/add', 'UserController@create')->name('create');
 });
+
+Route::group(['prefix' => 'profile', 'as' => 'profile.', 'middleware' => ['logged_in']], function () {
+    Route::get('/', 'ProfileController@index')->name('index');
+});
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

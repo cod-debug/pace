@@ -6,11 +6,12 @@ export default defineConfig({
     plugins: [
         laravel({
             input: [
+                // CSS
                 'resources/sass/app.scss',
                 'resources/css/app.css',
                 'resources/css/font-awesome.min.css',
                 'resources/css/sidebar.min.css',
-                
+                // JS
                 'resources/js/app.js',
                 'resources/js/font-awesome.min.js',
             ],

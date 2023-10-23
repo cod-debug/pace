@@ -28,7 +28,7 @@
             </div>
             
             <div class="border-top border-bottom border-secondary bg-white text-center py-1">
-                <small class="mb-0 text-secondary">ADMIN</small>
+                <small class="mb-0 text-secondary">{{ $is_admin ? 'ADMIN' : 'USER'}}</small>
             </div> 
 
             <ul class="nav-links">
@@ -92,7 +92,17 @@
                         </ul>
                     </li>
                 @endif
+                <hr style="border: .5px solid white;" />
                 <li>
+                    <a href="{{route('profile.index')}}">
+                        <i class='bx bxs-id-card'></i>
+                        <span class="link_name">Profile</span>
+                    </a>
+                    <ul class="sub-menu blank">
+                        <li><a class="link_name" href="#">Profile</a></li>
+                    </ul>
+                </li>
+                <li id="logoutBtn">
                     <a href="#" onclick="logout()">
                         <i class='bx bx-power-off'></i>
                         <span class="link_name">Logout</span>

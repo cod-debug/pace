@@ -218,6 +218,18 @@ body {
 .sidebar .profile-details .job {
   font-size: 12px;
 }
+
+#logoutBtn {
+  background-color: #152638;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+#logoutBtn:hover {
+  transition: .5s ease-in;
+  background-color: #e63e4c;
+}
+
 .home-section {
   position: relative;
   background: #e4e9f7;

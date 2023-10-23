@@ -53,7 +53,7 @@ class UserController extends Controller
         $limit = isset($request->limit) ? $request->limit : 10;
 
         $user_list = User::where('status', '=', 'active')
-        ->where('full_name', 'LIKE', '%'.$request->search.'%')
+        ->where('name', 'LIKE', '%'.$request->search.'%')
         ->paginate($limit);
         
         return response(json_encode($user_list), 200);

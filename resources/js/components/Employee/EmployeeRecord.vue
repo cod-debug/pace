@@ -68,14 +68,46 @@
                                         <td></td>
                                     </tr> -->
                                     <tr v-for="(record, record_key) in employee_record" :key="record_key">
-                                        <td>{{ record.payment_date }}</td>
-                                        <td>{{ record.particulars }}</td>
-                                        <td class="text-right">₱ {{ record.union_dues }}</td>
-                                        <td class="text-right">₱ {{ record.ip_funds }}</td>
-                                        <td class="text-right">₱ {{ record.fa }}</td>
-                                        <td>{{ record.notes || '--' }}</td>
-                                        <td class="text-right">₱ {{ record.union_dues + record.ip_funds + record.fa }}</td>
-                                        <td></td>
+                                        <td>
+                                            <input type="date" v-model="record.payment_date" v-if="record.is_update" class="form-control" />
+                                            <span v-else>{{ record.payment_date }}</span>
+                                        </td>
+                                        <td>
+                                            <input type="text" v-model="record.particulars" v-if="record.is_update" class="form-control" />
+                                            <span v-else>{{ record.particulars }}</span>
+                                        </td>
+                                        <td class="text-right">
+                                            <input type="number" v-model="record.union_dues" v-if="record.is_update" class="form-control text-right" />
+                                            <span v-else>₱ {{ record.union_dues }}</span>
+                                        </td>
+                                        <td class="text-right">
+                                            <input type="number" v-model="record.ip_funds" v-if="record.is_update" class="form-control text-right" />
+                                            <span v-else>₱ {{ record.ip_funds }}</span>
+                                        </td>
+                                        <td class="text-right">
+                                            <input type="number" v-model="record.fa" v-if="record.is_update" class="form-control text-right" />
+                                            <span v-else>₱ {{ record.fa }}</span>
+                                        </td>
+                                        <td>
+                                            <input type="text" v-model="record.notes" v-if="record.is_update" class="form-control" />
+                                            <span v-else>{{ record.notes }}</span>
+                                        </td>
+                                        <td class="text-right">
+                                            ₱ {{ record.union_dues + record.ip_funds + record.fa }}
+                                        </td>
+                                        <td class="text-right">
+                                            <button class="btn btn-success btn-sm" title="Update" v-if="!record.is_update" type="button" @click="confirmPassword(record_key)">
+                                                <i class="fa fa-edit"></i>
+                                            </button>
+                                            <div class="is_update" v-if="record.is_update">
+                                                <button class="btn btn-secondary btn-sm" v-if="record.is_update" type="button" @click="updateRow(record_key)">
+                                                    <i class="fa fa-cancel"></i>
+                                                </button>
+                                                <button class="btn btn-success btn-sm" title="Save Update" v-if="record.is_update" type="button" @click="saveRow(record_key)">
+                                                    <i class="fa fa-check-circle"></i>
+                                                </button>
+                                            </div>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -98,12 +130,15 @@
 </template>
 
 <script>
-    import Loader from '../Reusables/Loader.vue';
+    import __WEBPACK_EXTERNAL_MODULE_jspdf__ from 'html2pdf.js';
+import Loader from '../Reusables/Loader.vue';
     import EmployeeRecordPdf from './pdf/EmployeeRecordPdf.vue';
     import html2pdf from 'html2pdf.js';
+import Swal from 'sweetalert2';
     export default {
         props:[
-            'selected_id'
+            'selected_id',
+            'auth'
         ],
         components: {
             AppLoader: Loader,
@@ -124,6 +159,8 @@
 
             loading_employee_info: true,
             loading_employee_record: true,
+
+            auth_user: null,
         }),
         mounted(){
             this.initApp();
@@ -150,6 +187,26 @@
             },
         },
         methods: {
+            confirmPassword(key){
+                
+                Swal.fire({
+                    title: "Confirm Password",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    cancelButtonText: 'Cancel',
+                    cancelButtonColor: 'brown',
+                    html: `
+                    <div class='form-group' style='text-align: left;'>
+                        <label>Password</label>
+                        <input type='password' class='form-control' id='confirmPassword' />
+                    </div>
+                    `
+                }).then((e) => {
+                    if(e.isConfirmed) {
+                        this.checkAuth(key);
+                    }
+                });
+            },
             downloadEmployeeRecordPdf(){
                 html2pdf(this.$refs.employee_record_pdf, {
                     margin: 10,
@@ -160,6 +217,7 @@
                 this.getEmployeeDetails();
                 this.getRecords();
                 this.payment_date = this.current_date;
+                this.auth_user = JSON.parse(this.auth);
             },
 
             resetForm(){
@@ -170,7 +228,9 @@
                 this.fa = 90;
                 this.notes = '';
             },
-
+            updateRow(key){
+                this.employee_record[key].is_update =this.employee_record[key].is_update ? false : true;
+            },
             async getEmployeeDetails(){
                 try {
                     this.loading_employee_info = true;
@@ -188,6 +248,27 @@
                 }
             },
 
+            async checkAuth(key){
+                let password = document.getElementById('confirmPassword').value;
+                let payload = {
+                    email: this.auth_user.email,
+                    password: password,
+                }
+
+                let fd = this.payloadToFormdata(payload);
+                
+                let res = await this.$axios('post', `/api/auth/check`, fd);
+                if([200, 201].includes(res.status)){
+                    this.updateRow(key);
+                } else {
+                    this.$swal({
+                        title: 'Error',
+                        text: 'Invalid password',
+                        icon: 'error'
+                    });
+                }
+            },
+
             async getRecords(){
                 try {
                     this.loading_employee_record = true;
@@ -195,7 +276,11 @@
                     let {data, status} = await this.$axios('get', `/api/employee/get-record/${this.selected_id}`);
                     if([200, 201].includes(status)){
                         console.log(data);
-                        this.employee_record = data.data;
+                        this.employee_record = data.data.map((i) => {
+                            i.notes = i.notes == 'null' ? '' : i.notes;
+
+                            return i;
+                        });
                     } else {
                         this.employee_record = [];
                     }
@@ -249,6 +334,51 @@
 
 
             },
+
+            async saveRow(key){
+                try {
+                    let selected_row = this.employee_record[key];
+                    
+                    let payload = {
+                        employee_id: parseInt(this.selected_id),
+                        payment_date: selected_row.payment_date,
+                        particulars: selected_row.particulars || '',
+                        union_dues: selected_row.union_dues,
+                        ip_funds: selected_row.ip_funds,
+                        fa: selected_row.fa,
+                        notes: selected_row.notes
+                    }
+
+                    let fd = this.payloadToFormdata(payload);
+
+                    let res = await this.$axios('post', `/api/employee/update-record/${selected_row.id}`, fd);
+
+                    if([200, 201].includes(res.status)){
+                        this.$swal({
+                            title: 'Success',
+                            text: res.data.message,
+                            icon: 'success'
+                        });
+                        this.employee_record[key].is_update = false;
+                    } else {
+                        this.$swal({
+                            title: 'Error',
+                            text: res.response.data.message,
+                            icon: 'error'
+                        });
+                        this.employee_record[key].is_update = false;
+                        this.getRecords();
+                    }
+                }
+                catch(e) {
+                    this.$swal({
+                        title: 'Success',
+                        text: 'Something went wrong during submission.',
+                        icon: 'error'
+                    });
+                    console.log(e, "saveRow error");
+                }
+            }
         }
     }
 </script>

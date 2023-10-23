@@ -104,6 +104,33 @@ class EmployeeController extends Controller
 
     }
 
+
+    public function updateRecord(Request $request, $id){
+        $validated = $request->validate([
+            'employee_id' => 'required|numeric',
+            'payment_date' => [
+                'required',
+                Rule::unique('employee_record')->where(function ($query) use ($request, $id) {
+                    return $query->where('id', '!=', $id)->where('employee_id', $request->input('employee_id'));
+                }),
+            ],
+            'particulars' => 'required',
+            'union_dues' => 'required|numeric',
+            'ip_funds' => 'required|numeric',
+            'fa' => 'required|numeric',
+            'notes' => 'max:255'
+        ]);
+
+        $record = EmployeeRecordModel::find($id)->update($validated);
+
+        $res = [
+            'message' => 'Successfully updated employee\'s record.'
+        ];
+
+        return json_encode($res);
+
+    }
+
     public function getRecord($id){
         $employees_record = EmployeeRecordModel::where('employee_id', $id)->orderBy('payment_date', 'DESC')->paginate(10);
 

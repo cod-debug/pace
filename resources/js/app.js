@@ -18,6 +18,7 @@ import UserIndex from './components/Users/UserIndex.vue';
 import UserAdd from './components/Users/UserAdd.vue';
 
 import VueAwesomePaginate from "vue-awesome-paginate";
+import ProfileIndex from './components/Profile/ProfileIndex.vue';
 
 import Swal from 'sweetalert2';
 import momentPlugin from './plugins/moment.js'
@@ -34,6 +35,7 @@ const app = createApp({
         AppAgencyFeeIndex: AgencyFeeIndex,
         AppUserIndex: UserIndex,
         AppUserAdd: UserAdd,
+        AppProfileIndex: ProfileIndex,
     }
 });
 
