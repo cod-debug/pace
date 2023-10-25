@@ -131,10 +131,10 @@
 
 <script>
     import __WEBPACK_EXTERNAL_MODULE_jspdf__ from 'html2pdf.js';
-import Loader from '../Reusables/Loader.vue';
+    import Loader from '../Reusables/Loader.vue';
     import EmployeeRecordPdf from './pdf/EmployeeRecordPdf.vue';
     import html2pdf from 'html2pdf.js';
-import Swal from 'sweetalert2';
+    import Swal from 'sweetalert2';
     export default {
         props:[
             'selected_id',

@@ -60,4 +60,35 @@ class ProfileController extends Controller
         
         return response(json_encode($res), $res['status']);
     }
+
+    public function emergencyChangePassword(Request $request){
+        $validated = $request->validate([
+            'id' => 'required',
+            'password' => 'required|max:255|min:8',
+        ]);
+
+        $user = User::find($validated['id']);
+
+        if($user){
+
+            $new_password = Hash::make($validated['password']);
+            $user->update([
+                'password' => $new_password
+            ]);
+            $user->save();
+            
+            $res = [
+                'status' => 200,
+                'message' => 'Successfully updated password.'
+            ];
+
+        } else {
+            $res = [
+                'status' => 400,
+                'message' => 'Invalid user.'
+            ];
+        }
+
+        return response(json_encode($res), $res['status']);
+    }
 }

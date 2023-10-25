@@ -49,4 +49,5 @@ Route::group(['prefix' => 'user', 'as' => 'user.', 'middleware' => ['logged_in']
 Route::group(['prefix' => 'profile', 'as' => 'profile.', 'middleware' => ['logged_in']], function () {
     Route::post('/update', 'ProfileController@saveUpdate');
     Route::post('/change-password', 'ProfileController@changePassword');
+    Route::post('/emergency-change-password', 'ProfileController@emergencyChangePassword');
 });

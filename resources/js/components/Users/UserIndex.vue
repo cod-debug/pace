@@ -44,7 +44,14 @@
                                 <td>
                                     {{ item.type }}
                                 </td>
-                                <td></td>
+                                <td class="text-right" width="30%">
+                                    <button class="btn btn-primary btn-sm btn-secondary" v-if="(item.id != auth_user.id) && (item.id != selected_user.id)" @click="confirmPassword(item)">
+                                        Change Password 
+                                    </button>
+                                    <button class="btn btn-primary btn-sm btn-success" @click="confirmChangePassword" v-if="(item.id == selected_user.id)">
+                                        <i class="fa fa-unlock"></i> Emergency Change Password
+                                    </button>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -59,7 +66,11 @@
 
 <script>
     import Loader from '../Reusables/Loader.vue';
+    import Swal from 'sweetalert2';
     export default {
+        props:[
+            'auth'
+        ],
         data: () => ({
             //  
             search: '',
@@ -68,6 +79,10 @@
             list_data: [],
             is_loading_list: false,
 
+            auth_user: null,
+            show_change_password_btn: false,
+
+            selected_user: {},
         }),
         components: {
             appLoader: Loader,
@@ -75,6 +90,7 @@
         methods: {
             initApp(){
                 this.getList();
+                this.auth_user = JSON.parse(this.auth);
             },
             submitSearch(){
 
@@ -103,6 +119,112 @@
                 }
                 this.is_loading_list = false;
             },
+            confirmPassword(item){
+                
+                Swal.fire({
+                    title: "Confirm Password",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    cancelButtonText: 'Cancel',
+                    cancelButtonColor: 'brown',
+                    html: `
+                    <div class='form-group' style='text-align: left;'>
+                        <label>Password</label>
+                        <input type='password' class='form-control' id='confirmPassword' />
+                    </div>
+                    `
+                }).then((e) => {
+                    if(e.isConfirmed) {
+                        this.checkAuth(item);
+                    }
+                });
+            },
+
+            async checkAuth(item){
+                let password = document.getElementById('confirmPassword').value;
+                let payload = {
+                    email: this.auth_user.email,
+                    password: password,
+                }
+
+                let fd = this.payloadToFormdata(payload);
+                
+                let res = await this.$axios('post', `/api/auth/check`, fd);
+                if([200, 201].includes(res.status)){
+                    this.show_change_password_btn = true;
+                    this.selected_user = item;
+                } else {
+                    this.show_change_password_btn = false;
+                    this.$swal({
+                        title: 'Error',
+                        text: 'Invalid password',
+                        icon: 'error'
+                    });
+                }
+            },
+
+            async confirmChangePassword(){
+                let vm = this;
+
+                Swal.fire({
+                    title: "Confirm Password",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    cancelButtonText: 'Cancel',
+                    cancelButtonColor: 'brown',
+                    html: `
+                    <div class='form-group' style='text-align: left;'>
+                        <label>Email</label>
+                        <input type='email' readonly value='${this.selected_user.email}' class='form-control' id='confirmPassword' />
+                    </div>
+                    <br />
+                    <div class='form-group' style='text-align: left;'>
+                        <label>New Password</label>
+                        <input type='password' class='form-control' id='newPassword' />
+                    </div>
+                    `
+                }).then(async (e) => {
+                    if(e.isConfirmed) {
+                        let password = document.getElementById('newPassword').value;
+                        
+                        let payload = {
+                            id: vm.selected_user.id,
+                            password: password
+                        }
+
+                        let fd = vm.payloadToFormdata(payload);
+
+                        let res = await this.$axios('post', `/api/profile/emergency-change-password`, fd);
+
+                        try {
+                            if([200, 201].includes(res.status)){
+                                this.$swal({
+                                    title: 'Success',
+                                    text: `${res.data.message}`,
+                                    icon: 'success'
+                                });
+                            } else {
+                                this.$swal({
+                                    title: 'Error',
+                                    text: `${res.data.message}`,
+                                    icon: 'Error'
+                                });
+                            }
+                        } catch (e) {
+                            this.$swal({
+                                title: 'Error',
+                                text: 'Something went wrong',
+                                icon: 'error'
+                            });
+                        }
+
+                        vm.$nextTick(() => {
+                            vm.selected_user = {};
+                            show_change_password_btn: false;
+                        });
+                    }
+                });
+            }
         },
 
         mounted(){
