@@ -1,5 +1,9 @@
 <template>
     <div>
+        <div class="text-center">
+            <h1>Progressive Alliance of Capitol Employees</h1>
+            <h2>(P A C E)</h2>
+        </div>
         <div class="row">
             <div class="form-group col-md-6 py-2">
                 <small class="text-muted">Full Name: </small>

@@ -42,10 +42,7 @@
                     
                     <div class="col-md-6">
                         <h3>Change password</h3>
-                        <p>You can use this form to update your password. 
-                            <br />
-                            <span class="text-warning"><strong>Note:</strong> Email address serves as your identifier, you are not allowed to changed it.</span>
-                        </p>
+                        <p>You can use this form to update your password.</p>
                     </div>
                     <div class="col-md-6">
                         <div class="card">

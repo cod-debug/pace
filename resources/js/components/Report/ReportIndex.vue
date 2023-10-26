@@ -95,6 +95,13 @@
                 <app-employee-record-table :is_pdf="true" />
             </div>
             <div ref="agency_fee_table_pdf">
+                <div class="text-center">
+                    <h1>Progressive Alliance of Capitol Employees</h1>
+                    <h2>(P A C E)</h2>
+                    <div class="text-center">
+                        <p>{{ as_of }}</p>
+                    </div>
+                </div>
                 <app-agency-fee-table :is_pdf="true" />
             </div>
         </div>
