@@ -5,7 +5,8 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <h4><i class="fa fa-file"></i> Add Employee Record</h4>
                     <div>
-                        <button class="btn btn-success mx-2" @click="downloadEmployeeRecordPdf"><i class="fa fa-download"></i> Save as PDF</button>
+                        <button class="btn btn-info mr-2" @click="downloadEmployeeDataPdf"><i class="fa fa-download"></i> Save Info as PDF</button>
+                        <button class="btn btn-success mx-2" @click="downloadEmployeeRecordPdf"><i class="fa fa-download"></i> Save Record as PDF</button>
                         <a href="/employee" class="btn btn-secondary"><i class="fa fa-users"></i> Back to Employee List</a>
                     </div>
 
@@ -126,6 +127,11 @@
                     :employee_record.sync="employee_record" />
             </div>
         </div>
+        <div v-if="!loading_employee_info && !loading_employee_record" >
+            <div ref="employee_data_record_pdf">
+                <app-employees-data-record-pdf :personal_info="employee_data" />
+            </div>
+        </div>
     </div>
 </template>
 
@@ -135,6 +141,7 @@
     import EmployeeRecordPdf from './pdf/EmployeeRecordPdf.vue';
     import html2pdf from 'html2pdf.js';
     import Swal from 'sweetalert2';
+    import EmployeesDataRecord from './pdf/EmployeesDataRecord.vue';
     export default {
         props:[
             'selected_id',
@@ -143,6 +150,7 @@
         components: {
             AppLoader: Loader,
             AppEmployeeRecordPdf: EmployeeRecordPdf,
+            AppEmployeesDataRecordPdf: EmployeesDataRecord,
         },
         data: () => ({
             name: "RECORD",
@@ -211,6 +219,12 @@
                 html2pdf(this.$refs.employee_record_pdf, {
                     margin: 10,
                     filename: `EMPLOYEE-RECORD_${this.employee_data.full_name.toUpperCase()}--${new Date()}.pdf`,
+                });
+            },
+            downloadEmployeeDataPdf(){
+                html2pdf(this.$refs.employee_data_record_pdf, {
+                    margin: 10,
+                    filename: `MEMBER-DATA_${this.employee_data.full_name.toUpperCase()}.pdf`,
                 });
             },
             initApp(){        

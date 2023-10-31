@@ -33,7 +33,7 @@
                                 {{ item.name }}
                             </td>
                             <td>
-                                {{ item.description }}
+                                {{ item.description != 'null' ? item.description : '' }}
                             </td>
                             <td class="text-right">
                                 <button class="btn btn-success btn-sm mx-1" @click="update(item)" v-if="selected_id != item.id || is_update"><i class="fa fa-edit"></i></button>

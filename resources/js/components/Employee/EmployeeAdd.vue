@@ -365,7 +365,7 @@ import Loader from '../Reusables/Loader.vue';
             last_step: 3,
 
             office_list: [],
-            employment_status_list: ['Employed', 'Retired'],
+            employment_status_list: ['Regular', 'Casual', 'Retired', 'Resigned'],
             civil_status_list: ['Single', 'Married', 'Widowed'],
 
             loading_employee_info: false,

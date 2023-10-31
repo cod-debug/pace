@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('office', function (Blueprint $table) {
             $table->id();
             $table->string('name')->nullable(false);
-            $table->string('description')->nullable(true);
+            $table->string('description')->nullable(true)->default('');
             $table->string('status')->default('active');
             $table->timestamps();
         });
