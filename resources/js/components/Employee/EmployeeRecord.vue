@@ -127,7 +127,7 @@
                     :employee_record.sync="employee_record" />
             </div>
         </div>
-        <div v-if="!loading_employee_info && !loading_employee_record" >
+        <div v-if="!loading_employee_info && !loading_employee_record" style="height: 0px!important; overflow: hidden;" >
             <div ref="employee_data_record_pdf">
                 <app-employees-data-record-pdf :personal_info="employee_data" />
             </div>
