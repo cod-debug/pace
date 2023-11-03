@@ -18,13 +18,17 @@
 @php
     $role = auth()->user()->type;
     $is_admin = $role === 'admin';
+
+    function checkActiveRoute($routes){
+        return in_array(request()->route()->getName(), $routes);
+    }
 @endphp
 <body>
     <div class="s-layout"><div class="layout has-sidebar fixed-sidebar fixed-header">
         <div class="sidebar">
             <div class="logo-details">
                 <i class='bx bx-book-content'></i>
-                <span class="logo_name">PACE</span>
+                <span class="logo_name">PACE </span>
             </div>
             
             <div class="border-top border-bottom border-secondary bg-white text-center py-1">
@@ -32,7 +36,7 @@
             </div> 
 
             <ul class="nav-links">
-                <li>
+                <li class="{{ checkActiveRoute(array('dashboard')) ? 'active-page' : ''}}">
                     <a href="{{route('dashboard')}}">
                         <i class='bx bx-home'></i>
                         <span class="link_name">Dashboard</span>
@@ -42,7 +46,7 @@
                     </ul>
                 </li>
                 @if($is_admin)
-                    <li>
+                <li class="{{ checkActiveRoute(array('office.list')) ? 'active-page' : ''}}">
                         <a href="{{route('office.list')}}">
                             <i class='bx bx-building'></i>
                             <span class="link_name">Departments</span>
@@ -53,7 +57,7 @@
                     </li>
                 @endif
                 <!-- THE ONLY ROUTE FOR ALL -->
-                <li>
+                <li class="{{ checkActiveRoute(array('employee.list', 'employee.add', 'employee.edit', 'employee.record')) ? 'active-page' : ''}}">
                     <a href="{{route('employee.list')}}">
                         <i class='bx bx-user'></i>
                         <span class="link_name">Employees</span>
@@ -62,7 +66,7 @@
                         <li><a class="link_name" href="#">Employees</a></li>
                     </ul>
                 </li>
-                <li>
+                <li class="{{ checkActiveRoute(array('agency_fee.index')) ? 'active-page' : ''}}">
                     <a href="{{route('agency_fee.index')}}">
                         <i class='bx bx-credit-card-front'></i>
                         <span class="link_name">Agency Fees</span>
@@ -73,7 +77,7 @@
                 </li>
 
                 @if($is_admin)
-                    <li>
+                <li class="{{ checkActiveRoute(array('report.index')) ? 'active-page' : ''}}">
                         <a href="{{route('report.index')}}">
                             <i class='bx bxs-report'></i>
                             <span class="link_name">Reports</span>
@@ -82,7 +86,7 @@
                             <li><a class="link_name" href="#">Reports</a></li>
                         </ul>
                     </li>
-                    <li>
+                    <li class="{{ checkActiveRoute(array('user.index', 'user.create')) ? 'active-page' : ''}}">
                         <a href="{{route('user.index')}}">
                             <i class='bx bxs-user'></i>
                             <span class="link_name">Users</span>
@@ -93,7 +97,7 @@
                     </li>
                 @endif
                 <hr style="border: .5px solid white;" />
-                <li>
+                <li class="{{ checkActiveRoute(array('profile.index')) ? 'active-page' : ''}}">
                     <a href="{{route('profile.index')}}">
                         <i class='bx bxs-id-card'></i>
                         <span class="link_name">Profile</span>
