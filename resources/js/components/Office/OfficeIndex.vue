@@ -76,7 +76,7 @@
         data: () => ({
             name: '',
             page: 1,
-            limit: 10,
+            limit: 2,
             description: '',
             list_data: {},
             is_loading_list: false,
@@ -205,29 +205,29 @@
                 this.is_loading_list = false;
             },
 
-            async getList(){
-                try {
-                    this.is_loading_list = true;
-                    let {data, status} = await this.$axios('get','/office/list-api');
+            // async getList(){
+            //     try {
+            //         this.is_loading_list = true;
+            //         let {data, status} = await this.$axios('get','/office/list-api');
                     
-                    if([200, 201].includes(status)){
-                        this.list_data = data;
-                    } else {
-                        this.$swal({
-                            title: 'Success',
-                            text: data.message,
-                            icon: 'error'
-                        });
-                    }
-                } catch (e) {
-                    this.$swal({
-                        title: 'Success',
-                        text: 'Something went wrong during data fetching.',
-                        icon: 'error'
-                    });
-                }
-                this.is_loading_list = false;
-            },
+            //         if([200, 201].includes(status)){
+            //             this.list_data = data;
+            //         } else {
+            //             this.$swal({
+            //                 title: 'Success',
+            //                 text: data.message,
+            //                 icon: 'error'
+            //             });
+            //         }
+            //     } catch (e) {
+            //         this.$swal({
+            //             title: 'Success',
+            //             text: 'Something went wrong during data fetching.',
+            //             icon: 'error'
+            //         });
+            //     }
+            //     this.is_loading_list = false;
+            // },
 
             toggleShowForm(){
                 this.show_form = !this.show_form;
