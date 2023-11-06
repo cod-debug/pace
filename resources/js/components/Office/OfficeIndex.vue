@@ -76,7 +76,7 @@
         data: () => ({
             name: '',
             page: 1,
-            limit: 2,
+            limit: 10,
             description: '',
             list_data: {},
             is_loading_list: false,
