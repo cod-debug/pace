@@ -109,7 +109,7 @@
                     }
                 } catch (e) {
                     this.$swal({
-                        title: 'Success',
+                        title: 'Error',
                         text: 'Something went wrong during submission. Kindly contact the developer.',
                         icon: 'error'
                     });
