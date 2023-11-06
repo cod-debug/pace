@@ -220,7 +220,7 @@
             },
             update(item){
                 this.name = item.name;
-                this.description = item.description;
+                this.description = item.description == 'null' ? '' : item.description;
                 this.selected_id = item.id;
                 this.show_form = true;
                 this.is_update = true;
