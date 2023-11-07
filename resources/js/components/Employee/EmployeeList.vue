@@ -143,6 +143,7 @@
                             icon: 'success'
                         });
                         this.password = "";
+                        this.getList();
                     } else {
                         this.$swal({
                             title: 'Success',

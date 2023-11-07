@@ -19,8 +19,8 @@ class EmployeeController extends Controller
         'birth_date' => 'required',
         'civil_status' => 'required',
         'home_address' => 'required',
-        'contact_number' => 'required',
-        'email_address' => 'email',
+        'contact_number' => '',
+        'email_address' => '',
         'facebook_account' => 'max:255',
     ];
 
