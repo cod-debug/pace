@@ -124,6 +124,7 @@
             is_generating: false,
             
             report_by_office: [],
+            report_by_office_agency_fee: [],
             report_data: [],
             agency_fee_data: [],
             agency_fee_data_by_office: [],
@@ -176,7 +177,7 @@
             getTotal(is_agency_fee = false){
                 let total = 0;
                 if(is_agency_fee){
-                    this.agency_fee_data_by_office.map((office) => {
+                    this.report_by_office_agency_fee.map((office) => {
                         office.agency_fees.map((rec) => {
                             total+=rec.union_dues;
                             total+=rec.ip_funds;
@@ -361,6 +362,8 @@
                     // this.report_data = res.data.employee_record;
                     // this.agency_fee_data = res.data.agency_fee;
                     this.agency_fee_data_by_office = res.data.offices;
+                    this.report_by_office_agency_fee = res.data.offices_agency_fee;
+                    console.log(this.report_by_office_agency_fee, "ASDAS ASD ");
                 } else {
                     this.$swal({
                         title: 'Error',
