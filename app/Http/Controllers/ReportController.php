@@ -49,7 +49,13 @@ class ReportController extends Controller
                 $query->whereBetween('payment_date', [$date_from, $date_to])->orderBy('payment_date', 'DESC');
             }
         }])
-        ->with(['agency_fees' => function ($query) use ($date_from, $date_to) {
+        ->get();
+
+        $offices_agency_fee = OfficeModel::whereHas('agency_fees', function ($query) use ($office) {
+            if ($office) {
+                $query->where('office_id', $office);
+            }
+        })->with(['agency_fees' => function ($query) use ($date_from, $date_to) {
             if ($date_from && $date_to) {
                 $query->whereBetween('payment_date', [$date_from, $date_to])->orderBy('payment_date', 'DESC');
             }
@@ -60,6 +66,7 @@ class ReportController extends Controller
         
         $res = [
             "offices" => $offices,
+            "offices_agency_fee" => $offices_agency_fee,
         ];
         
         return json_encode($res);

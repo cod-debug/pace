@@ -11,7 +11,7 @@
                     <th class="text-right" width="15%">Total</th>
                 </tr>
             </thead>
-            <tbody  v-for="(office, office_key) in parentData.agency_fee_data_by_office" :key="office_key">
+            <tbody  v-for="(office, office_key) in parentData.report_by_office_agency_fee" :key="office_key">
                 <tr @click="office.show_agency_fee = !office.show_agency_fee ? true : false" style="cursor: pointer;">
                     <td colspan="2" class="bg-success text-white">{{ office.name }}</td>
                     <td class="text-right bg-success fw-bold text-white">
@@ -49,13 +49,13 @@
                     <td></td>
                     <td></td>
                     <td class="text-right fw-bold text-success" style="font-size: 16pt;">
-                        {{ parentData.getTotalUnionDuesRecord(parentData.agency_fee_data_by_office, true).toLocaleString() }}
+                        {{ parentData.getTotalUnionDuesRecord(parentData.report_by_office_agency_fee, true).toLocaleString() }}
                     </td>
                     <td class="text-right fw-bold text-success" style="font-size: 16pt;">
-                        {{ parentData.getTotalIPRecord(parentData.agency_fee_data_by_office, true).toLocaleString() }}
+                        {{ parentData.getTotalIPRecord(parentData.report_by_office_agency_fee, true).toLocaleString() }}
                     </td>
                     <td class="text-right fw-bold text-success" style="font-size: 16pt;">
-                        {{ parentData.getTotalFARecord(parentData.agency_fee_data_by_office, true).toLocaleString() }}
+                        {{ parentData.getTotalFARecord(parentData.report_by_office_agency_fee, true).toLocaleString() }}
                     </td>
                     <td class="text-right fw-bold text-success" style="font-size: 16pt;">
                         {{ parentData.getTotal(true) }}

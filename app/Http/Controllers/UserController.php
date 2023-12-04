@@ -37,7 +37,7 @@ class UserController extends Controller
         $validated = $request->validate($this->STORE_USER_VALIDATION);
 
         $validated['password'] = Hash::make($request->password);
-        $validated['type'] = 'active';
+        $validated['status'] = 'active';
 
         User::firstOrCreate($validated);
 
