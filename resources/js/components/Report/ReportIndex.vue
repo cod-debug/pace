@@ -86,8 +86,8 @@
         <div style="height: 0px!important; overflow: hidden;" >
             <div ref="employee_record_table_pdf">
                 <div class="text-center">
-                    <h1>Progressive Alliance of Capitol Employees</h1>
-                    <h2>(P A C E)</h2>
+                    <h4>Progressive Alliance of Capitol Employees</h4>
+                    <h5>(P A C E)</h5>
                     <div class="text-center">
                         <p>{{ as_of }}</p>
                     </div>
@@ -96,8 +96,8 @@
             </div>
             <div ref="agency_fee_table_pdf">
                 <div class="text-center">
-                    <h1>Progressive Alliance of Capitol Employees</h1>
-                    <h2>(P A C E)</h2>
+                    <h4>Progressive Alliance of Capitol Employees</h4>
+                    <h5>(P A C E)</h5>
                     <div class="text-center">
                         <p>{{ as_of }}</p>
                     </div>
